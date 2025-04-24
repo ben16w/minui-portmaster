@@ -63,4 +63,6 @@ Note: The `<PLATFORM>` folder name is based on the name of your device. For exam
 
 PortMaster is open-source software licensed under the [MIT License](https://opensource.org/licenses/MIT). See the [LICENSE](https://raw.githubusercontent.com/PortsMaster/PortMaster-GUI/refs/heads/main/LICENSE) for details.
 
-The project code which is not part of PortMaster is also licensed under the [MIT License](https://opensource.org/licenses/MIT). See the project [LICENSE](LICENSE) file for more details.
+The MinUI PortMaster project code is also licensed under the [MIT License](https://opensource.org/licenses/MIT). See the project [LICENSE](LICENSE) file for more details.
+
+The files contained in the `lib` and `bin` directories are third-party components and are licensed under their respective licenses and are not part of this project.

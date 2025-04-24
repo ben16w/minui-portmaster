@@ -56,6 +56,20 @@ cleanup() {
     fi
 }
 
+create_busybox_wrappers() {
+    for cmd in $("$PAK_DIR/bin/busybox" --list); do
+        if [ -e "$PAK_DIR/bin/$cmd" ] || [ "$cmd" = "sh" ]; then
+            continue
+        fi
+
+        cat > "$PAK_DIR/bin/$cmd" <<EOF
+#!/bin/sh
+exec $PAK_DIR/bin/busybox $cmd "\$@"
+EOF
+        chmod +x "$PAK_DIR/bin/$cmd"
+    done
+}
+
 copy_artwork() {
     for dir in "$PORTS_DIR"/*/; do
         [ -d "$dir" ] || continue
@@ -83,6 +97,8 @@ copy_artwork() {
 main() {
     echo "1" >/tmp/stay_awake
     trap "cleanup" EXIT INT TERM HUP QUIT
+
+    create_busybox_wrappers
 
     cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor >"$USERDATA_PATH/PORTS-portmaster/cpu_governor.txt"
     cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq >"$USERDATA_PATH/PORTS-portmaster/cpu_min_freq.txt"
