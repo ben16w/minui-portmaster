@@ -1,5 +1,5 @@
 {
-    "label": "PORTS",
+    "label": "Ports",
     "launch": "launch.sh",
     "description": "Runs PortMaster for the specified port.",
     "platforms": [
