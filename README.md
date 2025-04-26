@@ -45,6 +45,10 @@ Note: The `<PLATFORM>` folder name is based on the name of your device. For exam
 > [!IMPORTANT]
 > Not all ports are ready to run immediately after installation, and some may require additional steps. This usually involves copying files from a purchased copy of the game. These will need to be copied to the corresponding port folder in `/Roms/Ports (PORTS)/.ports` on the SD card. Please refer to the port's documentation at the [PortMaster](https://portmaster.games/games.html) website for specific instructions.
 
+## Artwork
+
+If covert artwork is available for a port, it will be displayed in NextUI. This feature can be disabled by creating a file named `no-artwork` in `/.userdata/<PLATFORM>/PORTS-portmaster` folder on your SD card.
+
 ## Known Issues
 
 - When you launch PortMaster or a port, a `/mnt/SDCARD/Data/ports` folder is created. It is usually deleted when PortMaster closes, but sometimes it may remain. This does not cause problems, but you can safely delete the folder manually if PortMaster is not running and the `/mnt/SDCARD/Data/ports` folder is empty.
