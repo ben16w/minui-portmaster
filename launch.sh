@@ -57,16 +57,24 @@ cleanup() {
 }
 
 create_busybox_wrappers() {
+    bin_dir="$PAK_DIR/bin"
+    if [ ! -x "$bin_dir/busybox" ]; then
+        echo "Error: $bin_dir/busybox not found or not executable"
+        return 1
+    fi
+
     for cmd in $("$PAK_DIR/bin/busybox" --list); do
-        if [ -e "$PAK_DIR/bin/$cmd" ] || [ "$cmd" = "sh" ]; then
+        if [ "$cmd" = "sh" ]; then
             continue
         fi
 
-        cat > "$PAK_DIR/bin/$cmd" <<EOF
+        if [ ! -e "$bin_dir/$cmd" ] || grep -q 'exec .*/busybox .*\$@' "$bin_dir/$cmd"; then
+            cat > "$bin_dir/$cmd" <<EOF
 #!/bin/sh
 exec $PAK_DIR/bin/busybox $cmd "\$@"
 EOF
-        chmod +x "$PAK_DIR/bin/$cmd"
+            chmod +x "$bin_dir/$cmd"
+        fi
     done
 }
 
