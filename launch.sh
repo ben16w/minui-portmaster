@@ -64,7 +64,7 @@ copy_artwork() {
         cover_png="$dir/cover.png"
         [ -f "$cover_png" ] || continue
 
-        echo "Processing folder: $dir"
+        echo "Processing folder $dir for artwork"
         shell_script=$(jq -r '.items[] | select(test("\\.sh$"))' "$port_json" | head -n1)
         if [ -z "$shell_script" ] || [ "$shell_script" = "null" ]; then
             echo "No shell script found in $port_json"
@@ -84,6 +84,8 @@ main() {
     echo "1" >/tmp/stay_awake
     trap "cleanup" EXIT INT TERM HUP QUIT
 
+    echo "Starting PortMaster with ROM: $ROM_PATH"
+
     cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor >"$USERDATA_PATH/PORTS-portmaster/cpu_governor.txt"
     cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq >"$USERDATA_PATH/PORTS-portmaster/cpu_min_freq.txt"
     cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq >"$USERDATA_PATH/PORTS-portmaster/cpu_max_freq.txt"
@@ -101,20 +103,16 @@ main() {
     if ! mount | grep -q "on $TEMP_DATA_DIR/ports type"; then
         mount -o bind "$ROM_DIR/.ports" "$TEMP_DATA_DIR/ports"
     else
-        echo "Mount point already exists, skipping mount."
+        echo "Mount point $TEMP_DATA_DIR/ports already exists, skipping mount."
     fi
-
-    cp -f "$PAK_DIR/files/control.txt" "$EMU_DIR/control.txt"
-    python3 "$PAK_DIR/src/replace_string_in_file.py" "$EMU_DIR/control.txt" EMU_DIR "$EMU_DIR"
-    python3 "$PAK_DIR/src/replace_string_in_file.py" "$EMU_DIR/control.txt" TEMP_DATA_DIR "$TEMP_DATA_DIR"
-
-    python3 "$PAK_DIR/src/replace_string_in_file.py" \
-        "$EMU_DIR/pylibs/harbourmaster/platform.py" "/mnt/SDCARD/Roms/PORTS" "$ROM_DIR"
-    python3 "$PAK_DIR/src/disable_python_function.py" \
-        "$EMU_DIR/pylibs/harbourmaster/platform.py" portmaster_install
 
     rm -f "$EMU_DIR/.pugwash-reboot"
     if echo "$ROM_NAME" | grep -qi "portmaster"; then
+        python3 "$PAK_DIR/src/replace_string_in_file.py" \
+            "$EMU_DIR/pylibs/harbourmaster/platform.py" "/mnt/SDCARD/Roms/PORTS" "$ROM_DIR"
+        python3 "$PAK_DIR/src/disable_python_function.py" \
+            "$EMU_DIR/pylibs/harbourmaster/platform.py" portmaster_install
+
         while true; do
             pugwash --debug
 
@@ -125,6 +123,9 @@ main() {
             rm -f "$EMU_DIR/.pugwash-reboot"
         done
     else
+        cp -f "$PAK_DIR/files/control.txt" "$EMU_DIR/control.txt"
+        python3 "$PAK_DIR/src/replace_string_in_file.py" "$EMU_DIR/control.txt" EMU_DIR "$EMU_DIR"
+        python3 "$PAK_DIR/src/replace_string_in_file.py" "$EMU_DIR/control.txt" TEMP_DATA_DIR "$TEMP_DATA_DIR"
         "$PAK_DIR/bin/busybox" sh "$ROM_PATH"
     fi
 
