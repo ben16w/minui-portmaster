@@ -11,6 +11,10 @@ clean:
 	find lib -mindepth 1 -maxdepth 1 -type d -exec rm -rf {} +
 	rm -rf PortMaster
 
+bump-version:
+	jq '.version = "$(RELEASE_VERSION)"' pak.json > pak.json.tmp
+	mv pak.json.tmp pak.json
+
 build: bin/bin.txt lib/lib.txt PortMaster bin/minui-power-control bin/minui-presenter bin/jq
 	@echo "Build complete"
 
@@ -54,7 +58,3 @@ release: build
 	git archive --format=zip --output "dist/$(PAK_NAME).pak.zip" HEAD
 	while IFS= read -r file; do zip -r "dist/$(PAK_NAME).pak.zip" "$$file"; done < .gitarchiveinclude
 	ls -lah dist
-
-bump-version:
-	jq '.version = "$(RELEASE_VERSION)"' pak.json > pak.json.tmp
-	mv pak.json.tmp pak.json
