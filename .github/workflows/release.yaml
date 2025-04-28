@@ -21,9 +21,34 @@ permissions:
   contents: write
 
 jobs:
+  version:
+    name: version
+    runs-on: ubuntu-24.04
+    outputs:
+      version: ${{ steps.next-tag.outputs.version }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+        with:
+          fetch-depth: 0
+
+      - name: Get Latest Tag
+        id: latest-tag
+        run: |
+          echo GIT_LATEST_TAG="$(git describe --tags "$(git rev-list --tags --max-count=1)")" >>"$GITHUB_OUTPUT"
+
+      - name: Compute Next Tag
+        id: next-tag
+        uses: docker://ghcr.io/dokku/semver-generator:latest
+        with:
+          bump: ${{ github.event.inputs.bump_type }}
+          input: ${{ steps.latest-tag.outputs.GIT_LATEST_TAG }}
+
   build:
     name: build
     runs-on: ubuntu-24.04-arm
+    needs: version
 
     steps:
       - name: Checkout
@@ -38,11 +63,13 @@ jobs:
 
       - name: Create release
         run: make clean build release
+        env:
+          RELEASE_VERSION: ${{ needs.version.outputs.version }}
 
       - name: Get Pak Name
         id: pak-name
         run: |
-          echo "PAK_NAME=$(jq -r .label pak.json)" >> $GITHUB_OUTPUT
+          echo "PAK_NAME=$(jq -r .name pak.json)" >> $GITHUB_OUTPUT
 
       - name: Attest Build Provenance
         uses: actions/attest-build-provenance@v2.2.3
@@ -58,7 +85,9 @@ jobs:
   release:
     name: release
     runs-on: ubuntu-24.04
-    needs: build
+    needs:
+      - version
+      - build
 
     steps:
       - name: Checkout
@@ -69,14 +98,14 @@ jobs:
       - name: Get Pak Name
         id: pak-name
         run: |
-          echo "PAK_NAME=$(jq -r .label pak.json)" >> $GITHUB_OUTPUT
+          echo "PAK_NAME=$(jq -r .name pak.json)" >> $GITHUB_OUTPUT
 
       - name: Download Artifacts
         uses: actions/download-artifact@v4.3.0
         with:
           name: "${{ steps.pak-name.outputs.PAK_NAME }}.pak.zip"
           path: "dist"
-      
+
       - name: Validate Artifact exists
         run: |
           if [ ! -f "dist/${{ steps.pak-name.outputs.PAK_NAME }}.pak.zip" ]; then
@@ -84,26 +113,18 @@ jobs:
             exit 1
           fi
 
-      - name: Get Latest Tag
-        id: latest-tag
-        run: |
-          echo GIT_LATEST_TAG="$(git describe --tags "$(git rev-list --tags --max-count=1)")" >>"$GITHUB_OUTPUT"
-
-      - name: Compute Next Tag
-        id: next-tag
-        uses: docker://ghcr.io/dokku/semver-generator:latest
-        with:
-          bump: ${{ github.event.inputs.bump_type }}
-          input: ${{ steps.latest-tag.outputs.GIT_LATEST_TAG }}
-
       - name: Create and Push Tag
         run: |
+          make bump-version
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git tag "$GIT_NEXT_TAG"
-          git push origin "$GIT_NEXT_TAG"
+          git add pak.json
+          git commit -m "Release $RELEASE_VERSION"
+          git tag "$RELEASE_VERSION"
+          git push origin "$RELEASE_VERSION"
+          git push origin main
         env:
-          GIT_NEXT_TAG: ${{ steps.next-tag.outputs.version }}
+          RELEASE_VERSION: ${{ needs.version.outputs.version }}
 
       - name: Release
         uses: softprops/action-gh-release@v2.2.2
@@ -111,4 +132,4 @@ jobs:
           files: dist/*
           generate_release_notes: true
           make_latest: "true"
-          tag_name: ${{ steps.next-tag.outputs.version }}
+          tag_name: ${{ needs.version.outputs.version }}

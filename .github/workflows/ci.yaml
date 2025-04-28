@@ -37,7 +37,7 @@ jobs:
       - name: Get Pak Name
         id: pak-name
         run: |
-          echo "PAK_NAME=$(jq -r .label pak.json)" >> $GITHUB_OUTPUT
+          echo "PAK_NAME=$(jq -r .name pak.json)" >> $GITHUB_OUTPUT
 
       - name: Attest Build Provenance
         uses: actions/attest-build-provenance@v2.2.3
@@ -64,14 +64,14 @@ jobs:
       - name: Get Pak Name
         id: pak-name
         run: |
-          echo "PAK_NAME=$(jq -r .label pak.json)" >> $GITHUB_OUTPUT
+          echo "PAK_NAME=$(jq -r .name pak.json)" >> $GITHUB_OUTPUT
 
       - name: Download Artifacts
         uses: actions/download-artifact@v4.3.0
         with:
           name: "${{ steps.pak-name.outputs.PAK_NAME }}.pak.zip"
           path: "dist"
-      
+
       - name: Validate Artifact exists
         run: |
           if [ ! -f "dist/${{ steps.pak-name.outputs.PAK_NAME }}.pak.zip" ]; then
