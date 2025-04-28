@@ -4,5 +4,3 @@
 .gitignore export-ignore
 Makefile export-ignore
 Portmaster.sh export-ignore
-files/bin.zip export-ignore
-files/lib.zip export-ignore

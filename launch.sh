@@ -80,6 +80,24 @@ copy_artwork() {
     done
 }
 
+unpack_bin() {
+    bin_zip="$PAK_DIR/files/bin.zip"
+    if [ -f "$bin_zip" ]; then
+        rm -rf "${PAK_DIR:?}/bin/*"
+        unzip -o "$bin_zip" -d "$PAK_DIR/bin" >/dev/null 2>&1
+        rm -f "$bin_zip"
+    fi
+}
+
+unpack_lib() {
+    lib_zip="$PAK_DIR/files/lib.zip"
+    if [ -f "$lib_zip" ]; then
+        rm -rf "${PAK_DIR:?}/lib/*"
+        unzip -o "$lib_zip" -d "$PAK_DIR/lib" >/dev/null 2>&1
+        rm -f "$lib_zip"
+    fi
+}
+
 main() {
     echo "1" >/tmp/stay_awake
     trap "cleanup" EXIT INT TERM HUP QUIT
@@ -90,6 +108,9 @@ main() {
     echo ondemand >/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
     echo 1608000 >/sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq
     echo 1800000 >/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
+
+    unpack_bin
+    unpack_lib
 
     if [ ! -f "$EMU_DIR/config/config.json" ]; then
         mkdir -p "$EMU_DIR/config"
