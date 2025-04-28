@@ -80,12 +80,13 @@ copy_artwork() {
     done
 }
 
-unpack_bin() {
+unpack_zip() {
     bin_zip="$PAK_DIR/files/bin.zip"
     if [ -f "$bin_zip" ]; then
         rm -rf "${PAK_DIR:?}/bin/*"
-        unzip -o "$bin_zip" -d "$PAK_DIR/bin" >/dev/null 2>&1
-        rm -f "$bin_zip"
+        if unzip -o "$bin_zip" -d "$PAK_DIR/bin" >/dev/null 2>&1; then
+            rm -f "$bin_zip"
+        fi
     fi
 }
 
@@ -93,8 +94,9 @@ unpack_lib() {
     lib_zip="$PAK_DIR/files/lib.zip"
     if [ -f "$lib_zip" ]; then
         rm -rf "${PAK_DIR:?}/lib/*"
-        unzip -o "$lib_zip" -d "$PAK_DIR/lib" >/dev/null 2>&1
-        rm -f "$lib_zip"
+        if unzip -o "$lib_zip" -d "$PAK_DIR/lib" >/dev/null 2>&1; then
+            rm -f "$lib_zip"
+        fi
     fi
 }
 
