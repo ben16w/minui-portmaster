@@ -80,22 +80,13 @@ copy_artwork() {
     done
 }
 
-unpack_zip() {
-    bin_zip="$PAK_DIR/files/bin.zip"
-    if [ -f "$bin_zip" ]; then
-        rm -rf "${PAK_DIR:?}/bin/*"
-        if unzip -o "$bin_zip" -d "$PAK_DIR/bin" >/dev/null 2>&1; then
-            rm -f "$bin_zip"
-        fi
-    fi
-}
-
-unpack_lib() {
-    lib_zip="$PAK_DIR/files/lib.zip"
-    if [ -f "$lib_zip" ]; then
-        rm -rf "${PAK_DIR:?}/lib/*"
-        if unzip -o "$lib_zip" -d "$PAK_DIR/lib" >/dev/null 2>&1; then
-            rm -f "$lib_zip"
+unpack_tar() {
+    tar_file="$1"
+    dest_dir="$2"
+    if [ -f "$tar_file" ]; then
+        rm -rf "${dest_dir:?}/"*
+        if tar -xf "$tar_file" -C "$dest_dir" >/dev/null 2>&1; then
+            rm -f "$tar_file"
         fi
     fi
 }
@@ -111,8 +102,8 @@ main() {
     echo 1608000 >/sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq
     echo 1800000 >/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
 
-    unpack_bin
-    unpack_lib
+    unpack_tar "$PAK_DIR/files/bins.tar" "$PAK_DIR/bin"
+    unpack_tar "$PAK_DIR/files/lib.tar" "$PAK_DIR/lib"
 
     if [ ! -f "$EMU_DIR/config/config.json" ]; then
         mkdir -p "$EMU_DIR/config"
