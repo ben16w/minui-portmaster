@@ -123,7 +123,7 @@ unpack_tar() {
     fi
 }
 
-unpack_pylibs() {
+unzip_pylibs() {
     echo "Unpacking $1"
     pylibs_file="$1"
     if [ ! -f "$pylibs_file" ]; then
@@ -161,9 +161,10 @@ main() {
 
     unpack_tar "$PAK_DIR/files/bin.tar.gz" "$PAK_DIR/bin"
     unpack_tar "$PAK_DIR/files/lib.tar.gz" "$PAK_DIR/lib"
-    unpack_pylibs "$EMU_DIR/pylibs.zip"
 
     create_busybox_wrappers
+
+    unzip_pylibs "$EMU_DIR/pylibs.zip"
 
     if [ ! -f "$EMU_DIR/config/config.json" ]; then
         mkdir -p "$EMU_DIR/config"
