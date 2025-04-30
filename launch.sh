@@ -111,7 +111,6 @@ unpack_tar() {
     tar_file="$1"
     dest_dir="$2"
     if [ -f "$tar_file" ]; then
-        rm -rf "${dest_dir:?}/"*
         if tar -xf "$tar_file" -C "$dest_dir" >/dev/null 2>&1; then
             rm -f "$tar_file"
         fi
@@ -132,8 +131,6 @@ main() {
         exit 1
     fi
 
-    create_busybox_wrappers
-
     cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor >"$USERDATA_PATH/PORTS-portmaster/cpu_governor.txt"
     cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq >"$USERDATA_PATH/PORTS-portmaster/cpu_min_freq.txt"
     cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq >"$USERDATA_PATH/PORTS-portmaster/cpu_max_freq.txt"
@@ -141,8 +138,10 @@ main() {
     echo 1608000 >/sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq
     echo 1800000 >/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
 
-    unpack_tar "$PAK_DIR/files/bins.tar" "$PAK_DIR/bin"
-    unpack_tar "$PAK_DIR/files/lib.tar" "$PAK_DIR/lib"
+    create_busybox_wrappers
+
+    unpack_tar "$PAK_DIR/files/bins.tar.gz" "$PAK_DIR/bin"
+    unpack_tar "$PAK_DIR/files/lib.tar.gz" "$PAK_DIR/lib"
 
     if [ ! -f "$EMU_DIR/config/config.json" ]; then
         mkdir -p "$EMU_DIR/config"
