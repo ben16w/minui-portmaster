@@ -45,9 +45,13 @@ Note: The `<PLATFORM>` folder name is based on the name of your device. For exam
 > [!IMPORTANT]
 > Not all ports are ready to run immediately after installation, and some may require additional steps. This usually involves copying files from a purchased copy of the game. These will need to be copied to the corresponding port folder in `/Roms/Ports (PORTS)/.ports` on the SD card. Please refer to the port's documentation at the [PortMaster](https://portmaster.games/games.html) website for specific instructions.
 
+## Artwork
+
+If cover artwork is available for a port, it will automatically be displayed in NextUI. This feature can be disabled by creating a file named `no-artwork` in the `/.userdata/<PLATFORM>/PORTS-portmaster` folder on your SD card.
+
 ## Known Issues
 
-- When you launch PortMaster or a port, a `/mnt/SDCARD/Data/ports` folder is created. It is usually deleted when PortMaster closes, but sometimes it may remain. This does not cause problems, but you can safely delete the folder manually if PortMaster is not running and the `/mnt/SDCARD/Data/ports` folder is empty.
+- When you launch PortMaster or a port, a `/mnt/SDCARD/PortTemp/ports` folder is created. It is usually deleted when PortMaster closes, but sometimes it may remain. This does not cause problems, but you can safely delete the folder manually if PortMaster is not running and the `/mnt/SDCARD/PortTemp/ports` folder is empty.
 - There is currently no way to manually install ports without Wi-Fi. The PortMaster GUI must be used to all install ports.
 - Some ports may not display cover art because the original port did not provide it. In a future update, screenshots will be used as a fallback for ports missing cover images.
 
@@ -67,6 +71,6 @@ Note: The `<PLATFORM>` folder name is based on the name of your device. For exam
 
 PortMaster is open-source software licensed under the [MIT License](https://opensource.org/licenses/MIT). See the [LICENSE](https://raw.githubusercontent.com/PortsMaster/PortMaster-GUI/refs/heads/main/LICENSE) for details.
 
-The MinUI PortMaster project code is also licensed under the [MIT License](https://opensource.org/licenses/MIT). See the project [LICENSE](LICENSE) file for more details.
+The libraries and binaries contained in the `lib` and `bin` directories are third-party components. They are licensed under their respective licenses and are not part of this project.
 
-The files contained in the `lib` and `bin` directories are third-party components and are licensed under their respective licenses and are not part of this project.
+The MinUI PortMaster project code is licensed under the [MIT License](https://opensource.org/licenses/MIT). See the project [LICENSE](LICENSE) file for more details.

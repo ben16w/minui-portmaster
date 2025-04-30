@@ -27,7 +27,7 @@ export XDG_DATA_HOME="$PAK_DIR"
 ROM_PATH="$1"
 ROM_DIR="$(dirname "$ROM_PATH")"
 ROM_NAME="$(basename "$ROM_PATH")"
-TEMP_DATA_DIR="$SDCARD_PATH/Data"
+TEMP_DATA_DIR="$SDCARD_PATH/PortTemp"
 PORTS_DIR="$ROM_DIR/.ports"
 
 export HM_TOOLS_DIR="$PAK_DIR"
@@ -56,7 +56,34 @@ cleanup() {
     fi
 }
 
+create_busybox_wrappers() {
+    bin_dir="$PAK_DIR/bin"
+    if [ ! -x "$bin_dir/busybox" ]; then
+        echo "Error: $bin_dir/busybox not found or not executable"
+        return 1
+    fi
+
+    for cmd in $("$bin_dir/busybox" --list); do
+        if [ "$cmd" = "sh" ]; then
+            continue
+        fi
+
+        if [ ! -e "$bin_dir/$cmd" ] || grep -q 'exec .*/busybox .*\$@' "$bin_dir/$cmd"; then
+            cat > "$bin_dir/$cmd" <<EOF
+#!/bin/sh
+exec $PAK_DIR/bin/busybox $cmd "\$@"
+EOF
+            chmod +x "$bin_dir/$cmd"
+        fi
+    done
+}
+
 copy_artwork() {
+    if [ -f "$USERDATA_PATH/PORTS-portmaster/no-artwork" ]; then
+        echo "Artwork copying skipped."
+        return
+    fi
+
     for dir in "$PORTS_DIR"/*/; do
         [ -d "$dir" ] || continue
         port_json="$dir/port.json"
@@ -94,6 +121,18 @@ unpack_tar() {
 main() {
     echo "1" >/tmp/stay_awake
     trap "cleanup" EXIT INT TERM HUP QUIT
+
+    if [ "$PLATFORM" = "tg3040" ] && [ -z "$DEVICE" ]; then
+        export PLATFORM="tg5040"
+    fi
+
+    allowed_platforms="tg5040"
+    if ! echo "$allowed_platforms" | grep -q "$PLATFORM"; then
+        echo "$PLATFORM is not a supported platform."
+        exit 1
+    fi
+
+    create_busybox_wrappers
 
     cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor >"$USERDATA_PATH/PORTS-portmaster/cpu_governor.txt"
     cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq >"$USERDATA_PATH/PORTS-portmaster/cpu_min_freq.txt"
