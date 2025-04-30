@@ -111,6 +111,16 @@ main() {
     echo "1" >/tmp/stay_awake
     trap "cleanup" EXIT INT TERM HUP QUIT
 
+    if [ "$PLATFORM" = "tg3040" ] && [ -z "$DEVICE" ]; then
+        export PLATFORM="tg5040"
+    fi
+
+    allowed_platforms="tg5040"
+    if ! echo "$allowed_platforms" | grep -q "$PLATFORM"; then
+        echo "$PLATFORM is not a supported platform."
+        exit 1
+    fi
+
     create_busybox_wrappers
 
     cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor >"$USERDATA_PATH/PORTS-portmaster/cpu_governor.txt"
