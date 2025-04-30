@@ -47,7 +47,7 @@ Note: The `<PLATFORM>` folder name is based on the name of your device. For exam
 
 ## Artwork
 
-If covert artwork is available for a port, it will be displayed in NextUI. This feature can be disabled by creating a file named `no-artwork` in `/.userdata/<PLATFORM>/PORTS-portmaster` folder on your SD card.
+If cover artwork is available for a port, it will automatically be displayed in NextUI. This feature can be disabled by creating a file named `no-artwork` in the `/.userdata/<PLATFORM>/PORTS-portmaster` folder on your SD card.
 
 ## Known Issues
 
