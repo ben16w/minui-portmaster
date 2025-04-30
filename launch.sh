@@ -111,12 +111,29 @@ unpack_tar() {
     echo "Unpacking $1 to $2"
     tar_file="$1"
     dest_dir="$2"
-    if [ -f "$tar_file" ]; then
-        if tar -xf "$tar_file" -C "$dest_dir"; then
-            rm -f "$tar_file"
-        fi
+    if [ ! -f "$tar_file" ]; then
+        echo "$tar_file not found"
+        return
+    fi
+    if tar -zxf "$tar_file" -C "$dest_dir"; then
+        rm -f "$tar_file"
     else
-        echo "Error: $tar_file not found"
+        echo "Failed to unpack $tar_file"
+        return 1
+    fi
+}
+
+unpack_pylibs() {
+    echo "Unpacking $1"
+    pylibs_file="$1"
+    if [ ! -f "$pylibs_file" ]; then
+        echo "$pylibs_file not found"
+        return
+    fi
+    if unzip -o "$pylibs_file" -d "$(dirname "$pylibs_file")"; then
+        rm -f "$pylibs_file"
+    else
+        echo "Failed to unpack $pylibs_file"
         return 1
     fi
 }
@@ -144,6 +161,7 @@ main() {
 
     unpack_tar "$PAK_DIR/files/bin.tar.gz" "$PAK_DIR/bin"
     unpack_tar "$PAK_DIR/files/lib.tar.gz" "$PAK_DIR/lib"
+    unpack_pylibs "$EMU_DIR/pylibs.zip"
 
     create_busybox_wrappers
 

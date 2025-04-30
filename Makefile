@@ -24,8 +24,6 @@ PortMaster:
 	mv trimui.portmaster/Apps/PortMaster/PortMaster PortMaster
 	rm -rf trimui.portmaster
 	rm -f trimui.portmaster.zip
-	unzip PortMaster/pylibs.zip -d PortMaster
-	rm -f PortMaster/pylibs.zip
 
 bin/minui-power-control:
 	mkdir -p bin
