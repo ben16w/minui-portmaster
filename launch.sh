@@ -58,6 +58,7 @@ cleanup() {
 
 create_busybox_wrappers() {
     bin_dir="$PAK_DIR/bin"
+    echo "Creating busybox wrappers in $bin_dir"
     if [ ! -x "$bin_dir/busybox" ]; then
         echo "Error: $bin_dir/busybox not found or not executable"
         return 1
@@ -108,9 +109,9 @@ copy_artwork() {
 }
 
 unpack_tar() {
-    echo "Unpacking $1 to $2"
     tar_file="$1"
     dest_dir="$2"
+    echo "Unpacking $1 to $2"
     if [ ! -f "$tar_file" ]; then
         echo "$tar_file not found"
         return
@@ -124,13 +125,13 @@ unpack_tar() {
 }
 
 unzip_pylibs() {
-    echo "Unpacking $1"
     pylibs_file="$1"
+    echo "Unzipping $1"
     if [ ! -f "$pylibs_file" ]; then
         echo "$pylibs_file not found"
         return
     fi
-    if unzip -o "$pylibs_file" -d "$(dirname "$pylibs_file")"; then
+    if unzip -oq "$pylibs_file" -d "$(dirname "$pylibs_file")"; then
         rm -f "$pylibs_file"
     else
         echo "Failed to unpack $pylibs_file"
