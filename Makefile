@@ -1,5 +1,4 @@
-TAG ?= latest
-PAK_NAME := $(shell jq -r .label pak.json)
+PAK_NAME := $(shell jq -r .name pak.json)
 
 MINUI_POWER_CONTROL_VERSION := 1.1.0
 PORTMASTER_VERSION := 2025.04.18-0611
@@ -11,6 +10,10 @@ clean:
 	find lib -type f ! -name '.gitkeep' -delete
 	find lib -mindepth 1 -maxdepth 1 -type d -exec rm -rf {} +
 	rm -rf PortMaster
+
+bump-version:
+	jq '.version = "$(RELEASE_VERSION)"' pak.json > pak.json.tmp
+	mv pak.json.tmp pak.json
 
 build: bin/bin.txt lib/lib.txt PortMaster bin/minui-power-control bin/minui-presenter bin/jq
 	@echo "Build complete"

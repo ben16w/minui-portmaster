@@ -1,8 +1,19 @@
 {
-    "label": "PORTS",
-    "launch": "launch.sh",
-    "description": "Runs PortMaster for the specified port.",
+    "name": "PORTS",
+    "version": "0.0.0",
+    "type": "EMU",
+    "description": "A Emu Pak for PortMaster which includes everything needed and requires no additional software.",
+    "author": "ben16w",
+    "repo_url": "https://github.com/ben16w/minui-portmaster",
+    "release_filename": "PORTS.pak.zip",
+    "banners": {
+        "BRICK": ".github/resources/banner.png"
+    },
     "platforms": [
         "tg5040"
-    ]
+    ],
+    "update_ignore": [
+        "PortMaster"
+    ],
+    "launch": "launch.sh"
 }
