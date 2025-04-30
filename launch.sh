@@ -108,12 +108,16 @@ copy_artwork() {
 }
 
 unpack_tar() {
+    echo "Unpacking $1 to $2"
     tar_file="$1"
     dest_dir="$2"
     if [ -f "$tar_file" ]; then
-        if tar -xf "$tar_file" -C "$dest_dir" >/dev/null 2>&1; then
+        if tar -xf "$tar_file" -C "$dest_dir"; then
             rm -f "$tar_file"
         fi
+    else
+        echo "Error: $tar_file not found"
+        return 1
     fi
 }
 
@@ -138,10 +142,10 @@ main() {
     echo 1608000 >/sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq
     echo 1800000 >/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
 
-    create_busybox_wrappers
-
-    unpack_tar "$PAK_DIR/files/bins.tar.gz" "$PAK_DIR/bin"
+    unpack_tar "$PAK_DIR/files/bin.tar.gz" "$PAK_DIR/bin"
     unpack_tar "$PAK_DIR/files/lib.tar.gz" "$PAK_DIR/lib"
+
+    create_busybox_wrappers
 
     if [ ! -f "$EMU_DIR/config/config.json" ]; then
         mkdir -p "$EMU_DIR/config"
