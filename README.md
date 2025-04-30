@@ -51,7 +51,7 @@ If cover artwork is available for a port, it will automatically be displayed in 
 
 ## Known Issues
 
-- When you launch PortMaster or a port, a `/mnt/SDCARD/Data/ports` folder is created. It is usually deleted when PortMaster closes, but sometimes it may remain. This does not cause problems, but you can safely delete the folder manually if PortMaster is not running and the `/mnt/SDCARD/Data/ports` folder is empty.
+- When you launch PortMaster or a port, a `/mnt/SDCARD/PortData/ports` folder is created. It is usually deleted when PortMaster closes, but sometimes it may remain. This does not cause problems, but you can safely delete the folder manually if PortMaster is not running and the `/mnt/SDCARD/PortData/ports` folder is empty.
 - There is currently no way to manually install ports without Wi-Fi. The PortMaster GUI must be used to all install ports.
 - Some ports may not display cover art because the original port did not provide it. In a future update, screenshots will be used as a fallback for ports missing cover images.
 
