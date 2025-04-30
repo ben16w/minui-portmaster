@@ -27,7 +27,7 @@ export XDG_DATA_HOME="$PAK_DIR"
 ROM_PATH="$1"
 ROM_DIR="$(dirname "$ROM_PATH")"
 ROM_NAME="$(basename "$ROM_PATH")"
-TEMP_DATA_DIR="$SDCARD_PATH/PortData"
+TEMP_DATA_DIR="$SDCARD_PATH/PortTemp"
 PORTS_DIR="$ROM_DIR/.ports"
 
 export HM_TOOLS_DIR="$PAK_DIR"
