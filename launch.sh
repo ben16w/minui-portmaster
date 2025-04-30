@@ -63,7 +63,7 @@ create_busybox_wrappers() {
         return 1
     fi
 
-    for cmd in $("$PAK_DIR/bin/busybox" --list); do
+    for cmd in $("$bin_dir/busybox" --list); do
         if [ "$cmd" = "sh" ]; then
             continue
         fi
