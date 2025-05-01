@@ -27,7 +27,7 @@ export XDG_DATA_HOME="$PAK_DIR"
 ROM_PATH="$1"
 ROM_DIR="$(dirname "$ROM_PATH")"
 ROM_NAME="$(basename "$ROM_PATH")"
-TEMP_DATA_DIR="$SDCARD_PATH/PortTemp"
+TEMP_DATA_DIR="$SDCARD_PATH/PortsTemp"
 PORTS_DIR="$ROM_DIR/.ports"
 
 export HM_TOOLS_DIR="$PAK_DIR"
@@ -163,10 +163,7 @@ main() {
 
     unpack_tar "$PAK_DIR/files/bin.tar.gz" "$PAK_DIR/bin"
     unpack_tar "$PAK_DIR/files/lib.tar.gz" "$PAK_DIR/lib"
-
     create_busybox_wrappers
-
-    unzip_pylibs "$EMU_DIR/pylibs.zip"
 
     if [ ! -f "$EMU_DIR/config/config.json" ]; then
         mkdir -p "$EMU_DIR/config"
@@ -183,6 +180,7 @@ main() {
 
     rm -f "$EMU_DIR/.pugwash-reboot"
     if echo "$ROM_NAME" | grep -qi "portmaster"; then
+        unzip_pylibs "$EMU_DIR/pylibs.zip"
         python3 "$PAK_DIR/src/replace_string_in_file.py" \
             "$EMU_DIR/pylibs/harbourmaster/platform.py" "/mnt/SDCARD/Roms/PORTS" "$ROM_DIR"
         python3 "$PAK_DIR/src/disable_python_function.py" \
