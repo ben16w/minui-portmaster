@@ -208,6 +208,8 @@ main() {
         "$EMU_DIR/pylibs/harbourmaster/platform.py" "/mnt/SDCARD/Roms/PORTS" "$ROM_DIR"
     python3 "$PAK_DIR/src/disable_python_function.py" \
         "$EMU_DIR/pylibs/harbourmaster/platform.py" portmaster_install
+
+    cp -f "$PAK_DIR/files/control.txt" "$EMU_DIR/control.txt"
     python3 "$PAK_DIR/src/replace_string_in_file.py" "$EMU_DIR/control.txt" EMU_DIR "$EMU_DIR"
     python3 "$PAK_DIR/src/replace_string_in_file.py" "$EMU_DIR/control.txt" TEMP_DATA_DIR "$TEMP_DATA_DIR"
 
@@ -227,7 +229,6 @@ main() {
             rm -f "$EMU_DIR/.pugwash-reboot"
         done
     else
-        cp -f "$PAK_DIR/files/control.txt" "$EMU_DIR/control.txt"
         "$PAK_DIR/bin/busybox" sh "$ROM_PATH"
     fi
 
