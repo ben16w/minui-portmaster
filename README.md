@@ -15,7 +15,7 @@ MinUI PortMaster is an Emu Pak for [MinUI](https://github.com/shauninman/MinUI) 
 - Distributed as a single Pak folder, no additional setup required.
 - Follows MinUI/NextUI SD card folder structure.
 - View cover artwork in NextUI for installed ports.
-- Supports deep sleep and shutdown on compatible devices (coming soon).
+- Supports deep sleep and shutdown on compatible devices.
 
 ## Supported Platforms
 
@@ -44,6 +44,10 @@ Note: The `<PLATFORM>` folder name is based on the name of your device. For exam
 
 > [!IMPORTANT]
 > Not all ports are ready to run immediately after installation, and some may require additional steps. This usually involves copying files from a purchased copy of the game. These will need to be copied to the corresponding port folder in `/Roms/Ports (PORTS)/.ports` on the SD card. Please refer to the port's documentation at the [PortMaster](https://portmaster.games/games.html) website for specific instructions.
+
+## Deep Sleep & Shutdown
+
+Deep sleep is supported on compatible devices. Click the power button to enter deep sleep. Click again to resume the game. To shut down, hold the power button for 2 seconds. **Note:** Shutdown does not save or resume the game and any unsaved progress will be lost. For more information and issues, see [MinUI Power Control](https://github.com/ben16w/minui-power-control).
 
 ## Artwork
 
