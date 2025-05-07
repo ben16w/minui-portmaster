@@ -35,7 +35,7 @@ export HM_PORTS_DIR="$TEMP_DATA_DIR/ports"
 export HM_SCRIPTS_DIR="$TEMP_DATA_DIR/ports"
 
 cleanup() {
-    rm -f /tmp/stay_awake
+    rm -f /tmp/power_control_dummy_pid
 
     if [ -f "$USERDATA_PATH/PORTS-portmaster/cpu_governor.txt" ]; then
         cat "$USERDATA_PATH/PORTS-portmaster/cpu_governor.txt" >/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
@@ -202,6 +202,8 @@ main() {
     else
         echo "Mount point $TEMP_DATA_DIR/ports already exists, skipping mount."
     fi
+
+    minui-power-control &
 
     if echo "$ROM_NAME" | grep -qi "portmaster"; then
         echo "Starting PortMaster GUI"
