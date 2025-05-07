@@ -178,8 +178,8 @@ main() {
         echo "Mount point $TEMP_DATA_DIR/ports already exists, skipping mount."
     fi
 
-    rm -f "$EMU_DIR/.pugwash-reboot"
     if echo "$ROM_NAME" | grep -qi "portmaster"; then
+        rm -f "$EMU_DIR/.pugwash-reboot"
         unzip_pylibs "$EMU_DIR/pylibs.zip"
         python3 "$PAK_DIR/src/replace_string_in_file.py" \
             "$EMU_DIR/pylibs/harbourmaster/platform.py" "/mnt/SDCARD/Roms/PORTS" "$ROM_DIR"
