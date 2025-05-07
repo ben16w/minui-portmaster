@@ -73,10 +73,6 @@ show_message() (
     fi
 )
 
-close_message() {
-    killall minui-presenter >/dev/null 2>&1 || true
-}
-
 create_busybox_wrappers() {
     bin_dir="$PAK_DIR/bin"
     echo "Creating busybox wrappers in $bin_dir"
@@ -176,13 +172,14 @@ main() {
 
     echo "Starting PortMaster with ROM: $ROM_PATH"
 
-    show_message "Unpacking files, please wait..." forever
+    if [ -f "$PAK_DIR/files/bin.tar.gz" ] || [ -f "$PAK_DIR/files/lib.tar.gz" ]; then
+        show_message "Unpacking files, please wait..." forever
+        unpack_tar "$PAK_DIR/files/bin.tar.gz" "$PAK_DIR/bin"
+        unpack_tar "$PAK_DIR/files/lib.tar.gz" "$PAK_DIR/lib"
+        create_busybox_wrappers
+    fi
 
-    unpack_tar "$PAK_DIR/files/bin.tar.gz" "$PAK_DIR/bin"
-    unpack_tar "$PAK_DIR/files/lib.tar.gz" "$PAK_DIR/lib"
-    create_busybox_wrappers
-
-    show_message "Starting ${ROM_PATH%.*}" forever
+    show_message "Starting ${ROM_NAME%.*}" 5 &
 
     cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor >"$USERDATA_PATH/PORTS-portmaster/cpu_governor.txt"
     cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq >"$USERDATA_PATH/PORTS-portmaster/cpu_min_freq.txt"
