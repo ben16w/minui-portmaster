@@ -189,19 +189,22 @@ main() {
     echo 1800000 >/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
 
     if [ ! -f "$EMU_DIR/config/config.json" ]; then
+        echo "Copying config.json to $EMU_DIR/config"
         mkdir -p "$EMU_DIR/config"
         cp -f "$PAK_DIR/files/config.json" "$EMU_DIR/config/config.json"
     fi
 
-    mkdir -p "$TEMP_DATA_DIR/ports"
     mkdir -p "$ROM_DIR/.ports"
     if ! mount | grep -q "on $TEMP_DATA_DIR/ports type"; then
+        echo "Mounting $ROM_DIR/.ports to $TEMP_DATA_DIR/ports"
+        mkdir -p "$TEMP_DATA_DIR/ports"
         mount -o bind "$ROM_DIR/.ports" "$TEMP_DATA_DIR/ports"
     else
         echo "Mount point $TEMP_DATA_DIR/ports already exists, skipping mount."
     fi
 
     if echo "$ROM_NAME" | grep -qi "portmaster"; then
+        echo "Starting PortMaster GUI"
         rm -f "$EMU_DIR/.pugwash-reboot"
         unzip_pylibs "$EMU_DIR/pylibs.zip"
         python3 "$PAK_DIR/src/replace_string_in_file.py" \
