@@ -179,7 +179,7 @@ main() {
         create_busybox_wrappers
     fi
 
-    show_message "Starting ${ROM_NAME%.*}" 5 &
+    show_message "Starting ${ROM_NAME%.*}" 10 &
 
     cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor >"$USERDATA_PATH/PORTS-portmaster/cpu_governor.txt"
     cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq >"$USERDATA_PATH/PORTS-portmaster/cpu_min_freq.txt"
