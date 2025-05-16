@@ -156,6 +156,41 @@ unzip_pylibs() {
     fi
 }
 
+update_file_shebang() {
+    file="$1"
+    echo "Updating shebang for $file"
+    if [ ! -f "$file" ]; then
+        echo "$file not found"
+        return 1
+    fi
+    first_line=$(head -n 1 "$file")
+    if [ "$first_line" = "#!/bin/bash" ]; then
+        tail -n +2 "$file" > "$file.tmp"
+        echo "#!/usr/bin/env bash" > "$file.new"
+        cat "$file.tmp" >> "$file.new"
+        mv "$file.new" "$file"
+        rm -f "$file.tmp"
+    else
+        echo "No need to update shebang for $file"
+    fi
+}
+
+update_shebangs_from_list() {
+    while IFS= read -r file || [ -n "$file" ]; do
+        [ -z "$file" ] && continue
+        update_file_shebang "$file"
+    done
+}
+
+find_shell_scripts() {
+    search_path="$1"
+    find "$search_path" -type f -executable | while read -r file; do
+        if head -n 1 "$file" | grep -qE '^#!.*(sh|bash)'; then
+            echo "$file"
+        fi
+    done
+}
+
 main() {
     echo "1" >/tmp/stay_awake
     trap "cleanup" EXIT INT TERM HUP QUIT
@@ -229,7 +264,9 @@ main() {
             rm -f "$EMU_DIR/.pugwash-reboot"
         done
     else
-        "$PAK_DIR/bin/busybox" sh "$ROM_PATH"
+        find_shell_scripts "$PORTS_DIR" | update_shebangs_from_list
+        update_file_shebang "$ROM_PATH"
+        "$PAK_DIR/bin/busybox" bash "$ROM_PATH"
     fi
 
     copy_artwork
