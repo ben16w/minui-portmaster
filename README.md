@@ -32,7 +32,7 @@ PortMaster is designed and tested for the following platforms:
 5. Confirm that there is a `/Emus/<PLATFORM>/PORTS.pak/launch.sh` file on your SD card.
 6. Create a folder at `/Roms/Ports (PORTS)`. This is where all the ports data will be stored.
 7. Create an empty file named `Portmaster.sh` in `/Roms/Ports (PORTS)`. Alternatively, you can copy the `Portmaster.sh` file from this repository.
-8. Unmount your SD Card and insert it into your MinUI device.
+8. Eject your SD card and insert it back into your MinUI device.
 
 Note: The `<PLATFORM>` folder name is based on the name of your device. For example, if you are using a TrimUI Brick, the folder is `tg5040`.
 
@@ -44,6 +44,29 @@ Note: The `<PLATFORM>` folder name is based on the name of your device. For exam
 
 > [!IMPORTANT]
 > Not all ports are ready to run immediately after installation, and some may require additional steps. This usually involves copying files from a purchased copy of the game. These will need to be copied to the corresponding port folder in `/Roms/Ports (PORTS)/.ports` on the SD card. Please refer to the port's documentation at the [PortMaster](https://portmaster.games/games.html) website for specific instructions.
+
+## Upgrading
+
+There are two ways to upgrade MinUI PortMaster. **Method 1 is recomended for most users to avoid losing your PortMaster data.**
+
+### Method 1: Safe Upgrade (Recommended)
+
+This method keeps your PortMaster data and settings intact while updating everything else. It is the method used when updating the pak via the [Nextui Pak Store](https://github.com/UncleJunVIP/nextui-pak-store).
+
+1. Mount your MinUI SD card to your computer.
+2. Download the latest `PORTS.pak.zip` from GitHub.
+3. Extract the zip file on your computer. This will create a new `PORTS.pak` folder.
+4. In the new `PORTS.pak` folder delete the foler named `PortMaster`.
+5. On your SD card, open the existing `/Emus/<PLATFORM>/PORTS.pak` folder.
+6. Copy the entire contents of the new `PORTS.pak` folder (the `PortMaster` folder will be missing) to the existing `PORTS.pak` folder on your SD card, **overwriting any files if prompted**.
+7. Eject your SD card and insert it back into your MinUI device.
+
+### Method 2: Full Replace (Not Recommended)
+
+1. **Delete** the entire old `PORTS.pak` folder from `/Emus/<PLATFORM>/` on your SD card.
+2. **Copy the new `PORTS.pak` folder** (from the extracted zip) to `/Emus/<PLATFORM>/` on your SD card.
+
+> **Note:** This method may remove some dependencies needed by your installed ports. If a port does not work after upgrading, launch PortMaster, go to **Manage Ports**, select the port that is not working, and choose **Reinstall Port**. This will restore any missing files for that port.
 
 ## Deep Sleep & Shutdown
 
