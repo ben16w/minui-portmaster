@@ -69,7 +69,7 @@ This method replaces the entire `PORTS.pak` folder on your SD card with a new on
 4. Eject your SD card and insert it back into your MinUI device.
 
 > [!IMPORTANT]
-> This method may remove some dependencies needed by your installed ports. If a port does not work after updating, launch PortMaster, go to **Manage Ports**, select the port that is not working, and choose **Reinstall Port**. This will restore any missing files for that port.
+> This method may remove some dependencies needed by your installed ports. If a port does not work after updating, launch PortMaster, go to **Manage Ports**, select the port that is not working, and choose **Reinstall**. This will restore any missing files for that port.
 
 ## Deep Sleep & Shutdown
 
