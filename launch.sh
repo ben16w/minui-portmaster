@@ -184,7 +184,7 @@ update_shebangs_from_list() {
 
 find_shell_scripts() {
     search_path="$1"
-    find "$search_path" -type f -executable | while read -r file; do
+    find "$search_path" -type f -executable \( -name "*.sh" -o ! -name "*.*" \) | while read -r file; do
         if head -n 1 "$file" | grep -qE '^#!.*(sh|bash)'; then
             echo "$file"
         fi
