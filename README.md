@@ -36,13 +36,20 @@ PortMaster is designed and tested for the following platforms:
 
 Note: The `<PLATFORM>` folder name is based on the name of your device. For example, if you are using a TrimUI Brick, the folder is `tg5040`.
 
+## Usage
+
+- From MinUI or NextUI, select the Ports->Portmaster entry to launch the manager.
+- Browse available ports and install new ones.
+- Installed ports will appear under the Ports entry in MinUI/NextUI.
+
+> [!IMPORTANT]
+> Not all ports are ready to run immediately after installation, and some may require additional steps. This usually involves copying files from a purchased copy of the game. These will need to be copied to the corresponding port folder in `/Roms/Ports (PORTS)/.ports` on the SD card. Please refer to the port's documentation at the [PortMaster](https://portmaster.games/games.html) website for specific instructions.
+
 ## Updating
 
-There are two ways to update MinUI PortMaster.
+### Safe Update Method (Recommended)
 
-### Safe Update (Recommended)
-
-This method keeps your PortMaster data and settings intact while updating everything else. It is the method used when updating the pak via the [Nextui Pak Store](https://github.com/UncleJunVIP/nextui-pak-store).
+This method keeps your PortMaster data and settings intact while updating everything else. It is the method used when updating the pak via the [NextUI Pak Store](https://github.com/UncleJunVIP/nextui-pak-store).
 
 1. Mount your MinUI SD card to your computer.
 2. Download the latest `PORTS.pak.zip` from GitHub.
@@ -52,7 +59,7 @@ This method keeps your PortMaster data and settings intact while updating everyt
 6. Copy the entire contents of the new `PORTS.pak` folder (the `PortMaster` folder will be missing) to the existing `PORTS.pak` folder on your SD card. **Overwrite any files if prompted.**
 7. Eject your SD card and insert it back into your MinUI device.
 
-### Full Replace (Not Recommended)
+### Full Replace Method (Not Recommended)
 
 This method replaces the entire `PORTS.pak` folder on your SD card with a new one. It is easier but it's not recommended as PortMaster settings and data will be lost. This method is only recommended if you are having issues after trying the Safe Update method.
 
@@ -63,15 +70,6 @@ This method replaces the entire `PORTS.pak` folder on your SD card with a new on
 
 > [!IMPORTANT]
 > This method may remove some dependencies needed by your installed ports. If a port does not work after updating, launch PortMaster, go to **Manage Ports**, select the port that is not working, and choose **Reinstall Port**. This will restore any missing files for that port.
-
-## Usage
-
-- From MinUI or NextUI, select the Ports->Portmaster entry to launch the manager.
-- Browse available ports and install new ones.
-- Installed ports will appear under the Ports entry in MinUI/NextUI.
-
-> [!IMPORTANT]
-> Not all ports are ready to run immediately after installation, and some may require additional steps. This usually involves copying files from a purchased copy of the game. These will need to be copied to the corresponding port folder in `/Roms/Ports (PORTS)/.ports` on the SD card. Please refer to the port's documentation at the [PortMaster](https://portmaster.games/games.html) website for specific instructions.
 
 ## Deep Sleep & Shutdown
 
