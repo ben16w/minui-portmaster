@@ -67,9 +67,9 @@ show_message() (
     killall minui-presenter >/dev/null 2>&1 || true
     echo "$message" 1>&2
     if [ "$seconds" = "forever" ]; then
-        minui-presenter --message "$message" --timeout -1 &
+        minui-presenter --disable-auto-sleep --message "$message" --timeout -1 &
     else
-        minui-presenter --message "$message" --timeout "$seconds"
+        minui-presenter --disable-auto-sleep --message "$message" --timeout "$seconds"
     fi
 )
 
@@ -252,7 +252,7 @@ main() {
 
     if echo "$ROM_NAME" | grep -qi "portmaster"; then
         echo "Starting PortMaster GUI"
-        show_message "Starting PortMaster GUI" 5 &
+        show_message "Starting PortMaster GUI..." 10 &
         rm -f "$EMU_DIR/.pugwash-reboot"
 
         while true; do
@@ -266,7 +266,7 @@ main() {
         done
     else
         echo "Starting PortMaster with ROM: $ROM_PATH"
-        show_message "Starting ${ROM_NAME%.*}" 120 &
+        show_message "Starting ${ROM_NAME%.*}..." 240 &
         find_shell_scripts "$PORTS_DIR" | update_shebangs_from_list
         update_file_shebang "$ROM_PATH"
         "$PAK_DIR/bin/busybox" bash "$ROM_PATH"
