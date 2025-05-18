@@ -38,15 +38,18 @@ cleanup() {
     rm -f /tmp/power_control_dummy_pid
 
     if [ -f "$USERDATA_PATH/PORTS-portmaster/cpu_governor.txt" ]; then
-        cat "$USERDATA_PATH/PORTS-portmaster/cpu_governor.txt" >/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+        cat "$USERDATA_PATH/PORTS-portmaster/cpu_governor.txt" \
+            >/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
         rm -f "$USERDATA_PATH/PORTS-portmaster/cpu_governor.txt"
     fi
     if [ -f "$USERDATA_PATH/PORTS-portmaster/cpu_min_freq.txt" ]; then
-        cat "$USERDATA_PATH/PORTS-portmaster/cpu_min_freq.txt" >/sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq
+        cat "$USERDATA_PATH/PORTS-portmaster/cpu_min_freq.txt" \
+            >/sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq
         rm -f "$USERDATA_PATH/PORTS-portmaster/cpu_min_freq.txt"
     fi
     if [ -f "$USERDATA_PATH/PORTS-portmaster/cpu_max_freq.txt" ]; then
-        cat "$USERDATA_PATH/PORTS-portmaster/cpu_max_freq.txt" >/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
+        cat "$USERDATA_PATH/PORTS-portmaster/cpu_max_freq.txt" \
+            >/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
         rm -f "$USERDATA_PATH/PORTS-portmaster/cpu_max_freq.txt"
     fi
 
@@ -184,7 +187,9 @@ update_shebangs_from_list() {
 
 find_shell_scripts() {
     search_path="$1"
-    find "$search_path" -type f -executable \( -name "*.sh" -o -name "*.src" -o -name "*.txt" -o ! -name "*.*" \) | while read -r file; do
+    find "$search_path" -type f -executable \
+        \( -name "*.sh" -o -name "*.src" -o -name "*.txt" -o ! -name "*.*" \) \
+        | while read -r file; do
         if head -n 1 "$file" | grep -qE '^#!.*(sh|bash)'; then
             echo "$file"
         fi
@@ -216,9 +221,12 @@ main() {
 
     show_message "Starting, please wait..." forever
 
-    cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor >"$USERDATA_PATH/PORTS-portmaster/cpu_governor.txt"
-    cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq >"$USERDATA_PATH/PORTS-portmaster/cpu_min_freq.txt"
-    cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq >"$USERDATA_PATH/PORTS-portmaster/cpu_max_freq.txt"
+    cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor \
+        >"$USERDATA_PATH/PORTS-portmaster/cpu_governor.txt"
+    cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq \
+        >"$USERDATA_PATH/PORTS-portmaster/cpu_min_freq.txt"
+    cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq \
+        >"$USERDATA_PATH/PORTS-portmaster/cpu_max_freq.txt"
     echo ondemand >/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
     echo 1608000 >/sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq
     echo 1800000 >/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
@@ -245,8 +253,10 @@ main() {
         "$EMU_DIR/pylibs/harbourmaster/platform.py" portmaster_install
 
     cp -f "$PAK_DIR/files/control.txt" "$EMU_DIR/control.txt"
-    python3 "$PAK_DIR/src/replace_string_in_file.py" "$EMU_DIR/control.txt" EMU_DIR "$EMU_DIR"
-    python3 "$PAK_DIR/src/replace_string_in_file.py" "$EMU_DIR/control.txt" TEMP_DATA_DIR "${TEMP_DATA_DIR#/}"
+    python3 "$PAK_DIR/src/replace_string_in_file.py" "$EMU_DIR/control.txt" \
+        EMU_DIR "$EMU_DIR"
+    python3 "$PAK_DIR/src/replace_string_in_file.py" "$EMU_DIR/control.txt" \
+        TEMP_DATA_DIR "${TEMP_DATA_DIR#/}"
 
     minui-power-control &
 
