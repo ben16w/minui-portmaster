@@ -266,7 +266,7 @@ main() {
         done
     else
         echo "Starting PortMaster with ROM: $ROM_PATH"
-        show_message "Starting ${ROM_NAME%.*}..." 240 &
+        show_message "Starting ${ROM_NAME%.*}..." 120 &
         find_shell_scripts "$PORTS_DIR" | update_shebangs_from_list
         update_file_shebang "$ROM_PATH"
         "$PAK_DIR/bin/busybox" bash "$ROM_PATH"
