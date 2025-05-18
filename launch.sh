@@ -214,7 +214,7 @@ main() {
         create_busybox_wrappers
     fi
 
-    show_message "Starting ${ROM_NAME%.*}" 120 &
+    show_message "Starting, please wait..." forever
 
     cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor >"$USERDATA_PATH/PORTS-portmaster/cpu_governor.txt"
     cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq >"$USERDATA_PATH/PORTS-portmaster/cpu_min_freq.txt"
@@ -252,6 +252,7 @@ main() {
 
     if echo "$ROM_NAME" | grep -qi "portmaster"; then
         echo "Starting PortMaster GUI"
+        show_message "Starting PortMaster GUI" 5 &
         rm -f "$EMU_DIR/.pugwash-reboot"
 
         while true; do
@@ -264,6 +265,8 @@ main() {
             rm -f "$EMU_DIR/.pugwash-reboot"
         done
     else
+        echo "Starting PortMaster with ROM: $ROM_PATH"
+        show_message "Starting ${ROM_NAME%.*}" 120 &
         find_shell_scripts "$PORTS_DIR" | update_shebangs_from_list
         update_file_shebang "$ROM_PATH"
         "$PAK_DIR/bin/busybox" bash "$ROM_PATH"
