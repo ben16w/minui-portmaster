@@ -196,6 +196,21 @@ find_shell_scripts() {
     done
 }
 
+replace_progressor_binaries() {
+    search_path="$1"
+    src="$PAK_DIR/files/progressor"
+    if [ ! -f "$src" ]; then
+        echo "Source progressor binary not found at $src"
+        return 1
+    fi
+
+    find "$search_path" -type f -name "progressor" | while read -r target; do
+        echo "Replacing $target with $src"
+        cp -f "$src" "$target"
+        chmod +x "$target"
+    done
+}
+
 main() {
     echo "1" >/tmp/stay_awake
     trap "cleanup" EXIT INT TERM HUP QUIT
@@ -279,6 +294,7 @@ main() {
         show_message "Starting ${ROM_NAME%.*}..." 120 &
         find_shell_scripts "$PORTS_DIR" | update_shebangs_from_list
         update_file_shebang "$ROM_PATH"
+        #replace_progressor_binaries "$PORTS_DIR"
         "$PAK_DIR/bin/busybox" bash "$ROM_PATH"
     fi
 

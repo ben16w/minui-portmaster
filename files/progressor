@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+TITLE="Please wait..."
+COMMAND=()
+
+# Parse options
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --title)
+            TITLE="$2"
+            shift 2
+            ;;
+        --*) # Ignore all other -- options
+            shift
+            ;;
+        *)  # First non-option: start of the command
+            COMMAND=("$@")
+            break
+            ;;
+    esac
+done
+
+if [[ ${#COMMAND[@]} -eq 0 ]]; then
+    echo "Usage: $0 [--title title] command [args...]"
+    exit 1
+fi
+
+# Start the target command in the background
+"${COMMAND[@]}" &
+CMD_PID=$!
+
+wait $CMD_PID
+exit_code=$?
+
+exit $exit_code
