@@ -198,16 +198,29 @@ find_shell_scripts() {
 
 replace_progressor_binaries() {
     search_path="$1"
-    src="$PAK_DIR/files/progressor"
-    if [ ! -f "$src" ]; then
-        echo "Source progressor binary not found at $src"
+    progressor_src="$PAK_DIR/files/progressor"
+    presenter_src="$PAK_DIR/files/minui-presenter"
+
+    if [ ! -f "$progressor_src" ]; then
+        echo "Source progressor binary not found at $progressor_src"
+        return 1
+    fi
+
+    if [ ! -f "$presenter_src" ]; then
+        echo "Source minui-presenter binary not found at $presenter_src"
         return 1
     fi
 
     find "$search_path" -type f -name "progressor" | while read -r target; do
-        echo "Replacing $target with $src"
-        cp -f "$src" "$target"
+        echo "Replacing $target with $progressor_src"
+        cp -f "$progressor_src" "$target"
         chmod +x "$target"
+        presenter_target="$(dirname "$target")/minui-presenter"
+        if [ ! -f "$presenter_target" ]; then
+            echo "Copying $presenter_src to $presenter_target"
+            cp -f "$presenter_src" "$presenter_target"
+            chmod +x "$presenter_target"
+        fi
     done
 }
 

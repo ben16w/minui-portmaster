@@ -10,12 +10,13 @@ clean:
 	find lib -type f ! -name '.gitkeep' -delete
 	find lib -mindepth 1 -maxdepth 1 -type d -exec rm -rf {} +
 	rm -rf PortMaster
+	rm -f files/minui-presenter
 
 bump-version:
 	jq '.version = "$(RELEASE_VERSION)"' pak.json > pak.json.tmp
 	mv pak.json.tmp pak.json
 
-build: PortMaster bin/minui-power-control bin/minui-presenter bin/jq
+build: PortMaster bin/minui-power-control bin/minui-presenter files/minui-presenter bin/jq
 	@echo "Build complete"
 
 PortMaster:
@@ -34,6 +35,11 @@ bin/minui-presenter:
 	mkdir -p bin
 	curl -f -o bin/minui-presenter -sSL https://github.com/josegonzalez/minui-presenter/releases/download/$(MINUI_PRESENTER_VERSION)/minui-presenter-tg5040
 	chmod +x bin/minui-presenter
+
+files/minui-presenter:
+	mkdir -p files
+	curl -f -o files/minui-presenter -sSL https://github.com/josegonzalez/minui-presenter/releases/download/$(MINUI_PRESENTER_VERSION)/minui-presenter-tg5040
+	chmod +x files/minui-presenter
 
 bin/jq:
 	mkdir -p bin

@@ -1,7 +1,13 @@
 #!/bin/sh
 
-TITLE="Please wait..."
+TITLE="Loading"
 COMMAND=""
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+
+if [ ! -x "$SCRIPT_DIR/minui-presenter" ]; then
+    echo "Error: $SCRIPT_DIR/minui-presenter not found or not executable"
+    exit 1
+fi
 
 # Parse options
 while [ $# -gt 0 ]; do
@@ -28,11 +34,16 @@ if [ -z "$COMMAND" ]; then
     exit 1
 fi
 
+
 # Start the target command in the background
 sh -c "$COMMAND" &
 CMD_PID=$!
 
+killall minui-presenter >/dev/null 2>&1 || true
+"$SCRIPT_DIR/minui-presenter" --disable-auto-sleep --message "$TITLE, please wait..." --timeout -1 &
+
 wait $CMD_PID
 exit_code=$?
 
+killall minui-presenter >/dev/null 2>&1 || true
 exit $exit_code
