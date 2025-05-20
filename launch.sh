@@ -34,8 +34,10 @@ export HM_TOOLS_DIR="$PAK_DIR"
 export HM_PORTS_DIR="$TEMP_DATA_DIR/ports"
 export HM_SCRIPTS_DIR="$TEMP_DATA_DIR/ports"
 
+# shellcheck disable=SC2317
 cleanup() {
     rm -f /tmp/power_control_dummy_pid
+    killall minui-presenter >/dev/null 2>&1 || true
 
     if [ -f "$USERDATA_PATH/PORTS-portmaster/cpu_governor.txt" ]; then
         cat "$USERDATA_PATH/PORTS-portmaster/cpu_governor.txt" \
@@ -307,7 +309,7 @@ main() {
         show_message "Starting ${ROM_NAME%.*}..." 120 &
         find_shell_scripts "$PORTS_DIR" | update_shebangs_from_list
         update_file_shebang "$ROM_PATH"
-        #replace_progressor_binaries "$PORTS_DIR"
+        replace_progressor_binaries "$PORTS_DIR"
         "$PAK_DIR/bin/busybox" bash "$ROM_PATH"
     fi
 
