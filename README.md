@@ -77,7 +77,7 @@ Deep sleep is supported on compatible devices. Click the power button to enter d
 
 ## Artwork
 
-Artwork for ports will automatically be displayed in NextUI. This feature can be disabled by creating a file named `no-artwork` in the `/.userdata/<PLATFORM>/PORTS-portmaster` folder on your SD card.
+Artwork for ports will automatically be displayed in NextUI. This feature can be disabled by creating a file named `no-artwork` in the `/.userdata/<PLATFORM>/PORTS-portmaster` folder on your SD card. MinUI is currently not supported.
 
 ## Known Issues
 
