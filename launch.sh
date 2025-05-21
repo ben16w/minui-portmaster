@@ -111,8 +111,15 @@ copy_artwork() {
         [ -d "$dir" ] || continue
         port_json="$dir/port.json"
         [ -f "$port_json" ] || continue
-        cover_png="$dir/cover.png"
-        [ -f "$cover_png" ] || continue
+        artwork_file="$dir/cover.png"
+        if [ ! -f "$artwork_file" ]; then
+            screenshot_candidate=$(find "$dir" -maxdepth 1 -type f -name 'screenshot*' | head -n1)
+            if [ -n "$screenshot_candidate" ]; then
+                artwork_file="$screenshot_candidate"
+            else
+                continue
+            fi
+        fi
 
         echo "Processing folder $dir for artwork"
         shell_script=$(jq -r '.items[] | select(test("\\.sh$"))' "$port_json" | head -n1)
@@ -125,7 +132,7 @@ copy_artwork() {
         dest_file="$ROM_DIR/.media/${shell_script%.*}.png"
         if [ ! -f "$dest_file" ]; then
             echo "Copying $dir/cover.png to $ROM_DIR/.media/$shell_script.png"
-            cp "$cover_png" "$dest_file"
+            cp "$artwork_file" "$dest_file"
         fi
     done
 }
