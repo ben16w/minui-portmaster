@@ -82,7 +82,6 @@ If cover artwork is available for a port, it will automatically be displayed in 
 ## Known Issues
 
 - When you launch PortMaster or a port, a `/mnt/SDCARD/PortsTemp/ports` folder is created. It is usually deleted when PortMaster closes, but sometimes it may remain. This does not cause problems, but you can safely delete the folder manually if PortMaster is not running and the `/mnt/SDCARD/PortsTemp/ports` folder is empty.
-- Some ports may not display cover art because the original port did not provide it. In a future update, screenshots will be used as a fallback for ports missing cover images.
 
 ## Troubleshooting
 
