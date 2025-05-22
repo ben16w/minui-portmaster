@@ -24,6 +24,7 @@ export PYSDL2_DLL_PATH="/usr/trimui/lib"
 export HOME="$SHARED_USERDATA_PATH/PORTS-portmaster"
 export XDG_DATA_HOME="$PAK_DIR"
 
+[ -z "$1" ] && exit 1
 ROM_PATH="$1"
 ROM_DIR="$(dirname "$ROM_PATH")"
 ROM_NAME="$(basename "$ROM_PATH")"
@@ -241,6 +242,25 @@ main() {
         export PLATFORM="tg5040"
     fi
 
+    if ! command -v minui-presenter >/dev/null 2>&1; then
+        show_message "Minui-presenter not found." 2
+        exit 1
+    fi
+
+    if ! command -v jq >/dev/null 2>&1; then
+        show_message "Jq not found." 2
+        exit 1
+    fi
+
+    if ! command -v minui-power-control >/dev/null 2>&1; then
+        show_message "Minui-power-control not found." 2
+        exit 1
+    fi
+
+    chmod +x "$PAK_DIR/bin/minui-presenter"
+    chmod +x "$PAK_DIR/bin/minui-power-control"
+    chmod +x "$PAK_DIR/bin/jq"
+
     allowed_platforms="tg5040"
     if ! echo "$allowed_platforms" | grep -q "$PLATFORM"; then
         echo "$PLATFORM is not a supported platform."
@@ -278,7 +298,10 @@ main() {
     if ! mount | grep -q "on $TEMP_DATA_DIR/ports type"; then
         echo "Mounting $ROM_DIR/.ports to $TEMP_DATA_DIR/ports"
         mkdir -p "$TEMP_DATA_DIR/ports"
-        mount -o bind "$ROM_DIR/.ports" "$TEMP_DATA_DIR/ports"
+        if ! mount -o bind "$ROM_DIR/.ports" "$TEMP_DATA_DIR/ports"; then
+            echo "Failed to mount $ROM_DIR/.ports to $TEMP_DATA_DIR/ports"
+            exit 1
+        fi
     else
         echo "Mount point $TEMP_DATA_DIR/ports already exists, skipping mount."
     fi
