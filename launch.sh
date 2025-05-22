@@ -247,13 +247,13 @@ main() {
         exit 1
     fi
 
-    if ! command -v jq >/dev/null 2>&1; then
-        show_message "Jq not found." 2
+    if ! command -v minui-power-control >/dev/null 2>&1; then
+        show_message "Minui-power-control not found." 2
         exit 1
     fi
 
-    if ! command -v minui-power-control >/dev/null 2>&1; then
-        show_message "Minui-power-control not found." 2
+    if ! command -v jq >/dev/null 2>&1; then
+        show_message "Jq not found." 2
         exit 1
     fi
 
