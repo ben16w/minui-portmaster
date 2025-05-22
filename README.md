@@ -32,7 +32,7 @@ PortMaster is designed and tested for the following platforms:
 ## Installation
 
 1. Mount your MinUI SD card to your computer.
-2. Download the latest release from GitHub. It will be named `PORTS.pak.zip`.
+2. Download the latest [release](https://github.com/ben16w/minui-portmaster/releases) from GitHub. It will be named `PORTS.pak.zip`.
 3. Copy the zip file to the correct platform folder in the "/Emus" folder on the SD card. Please ensure the new zip file name is `PORTS.pak.zip`.
 4. Extract the zip in place, then delete the zip file.
 5. Confirm that there is a `/Emus/<PLATFORM>/PORTS.pak/launch.sh` file on your SD card.
