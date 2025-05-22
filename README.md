@@ -56,7 +56,7 @@ This is the recommended method for updating PortMaster to a new version. It keep
 3. Extract the zip file on your computer. This will create a new `PORTS.pak` folder.
 4. In the new `PORTS.pak` folder, delete the folder named `PortMaster`.
 5. On your SD card, open the existing `/Emus/<PLATFORM>/PORTS.pak` folder.
-6. Copy the entire contents of the new `PORTS.pak` folder (the `PortMaster` folder will be missing) to the existing `PORTS.pak` folder on your SD card. **Overwrite any files if prompted.**
+6. Copy the entire contents of the new `PORTS.pak` folder (the `PortMaster` folder will be missing) to the existing `PORTS.pak` folder on your SD card. **Overwrite any files when prompted.**
 7. Eject your SD card and insert it back into your MinUI device.
 
 ### Full Update (Not Recommended)
