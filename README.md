@@ -1,5 +1,11 @@
 # MinUI PortMaster
 
+![GitHub License](https://img.shields.io/github/license/ben16w/minui-portmaster?style=for-the-badge)
+![GitHub Release](https://img.shields.io/github/v/release/ben16w/minui-portmaster?sort=semver&style=for-the-badge)
+![GitHub Repo stars](https://img.shields.io/github/stars/ben16w/minui-portmaster?style=for-the-badge)
+![GitHub Downloads (specific asset, all releases)](https://img.shields.io/github/downloads/ben16w/minui-portmaster/PORTS.pak.zip?style=for-the-badge&label=Downloads)
+
+
 A MinUI and NextUI Emu Pak for PortMaster which includes everything needed and requires no additional software.
 
 ## Description
