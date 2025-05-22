@@ -1,5 +1,5 @@
 <div align="center">
-<img src=".github/resources/banner.png?v=3" width="auto" alt="MinUI Portmaster wordmark">
+<img src=".github/resources/banner.png?v=4" width="auto" alt="MinUI Portmaster wordmark">
 
 ![GitHub License](https://img.shields.io/github/license/ben16w/minui-portmaster?style=for-the-badge)
 ![GitHub Release](https://img.shields.io/github/v/release/ben16w/minui-portmaster?sort=semver&style=for-the-badge)
