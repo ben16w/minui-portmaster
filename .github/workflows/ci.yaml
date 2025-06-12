@@ -40,7 +40,7 @@ jobs:
           echo "PAK_NAME=$(jq -r .name pak.json)" >> $GITHUB_OUTPUT
 
       - name: Attest Build Provenance
-        uses: actions/attest-build-provenance@v2.3.0
+        uses: actions/attest-build-provenance@v2.4.0
         with:
           subject-path: "dist/${{ steps.pak-name.outputs.PAK_NAME }}.pak.zip"
 
