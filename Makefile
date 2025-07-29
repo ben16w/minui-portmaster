@@ -47,8 +47,22 @@ bin/jq:
 	chmod +x bin/jq
 	curl -sSL -o bin/jq.LICENSE "https://github.com/jqlang/jq/raw/refs/heads/master/COPYING"
 
-release: build
+release: build pakz
 	mkdir -p dist
 	git archive --format=zip --output "dist/$(PAK_NAME).pak.zip" HEAD
 	while IFS= read -r file; do zip -r "dist/$(PAK_NAME).pak.zip" "$$file"; done < .gitarchiveinclude
 	ls -lah dist
+
+pakz: build
+	mkdir -p dist
+	# Create a temporary directory for the Tools structure
+	rm -rf /tmp/pakz-build
+	mkdir -p /tmp/pakz-build/Tools
+	# Extract git archive to Tools subdirectory
+	git archive --format=tar HEAD | tar -x -C /tmp/pakz-build/Tools
+	# Add additional files to Tools subdirectory
+	while IFS= read -r file; do cp -r "$$file" "/tmp/pakz-build/Tools/"; done < .gitarchiveinclude
+	# Create the pakz file from the Tools directory structure
+	cd /tmp/pakz-build && zip -r "$(PWD)/dist/$(PAK_NAME).pakz" Tools/
+	# Clean up temporary directory
+	rm -rf /tmp/pakz-build
