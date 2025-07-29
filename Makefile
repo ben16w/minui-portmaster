@@ -47,8 +47,17 @@ bin/jq:
 	chmod +x bin/jq
 	curl -sSL -o bin/jq.LICENSE "https://github.com/jqlang/jq/raw/refs/heads/master/COPYING"
 
-release: build
+release: build release-pakz
 	mkdir -p dist
 	git archive --format=zip --output "dist/$(PAK_NAME).pak.zip" HEAD
 	while IFS= read -r file; do zip -r "dist/$(PAK_NAME).pak.zip" "$$file"; done < .gitarchiveinclude
 	ls -lah dist
+
+release-pakz: build
+	mkdir -p dist
+	rm -rf /tmp/pakz-build
+	mkdir -p "/tmp/pakz-build/Tools/tg5040/$(PAK_NAME).pak"
+	git archive --format=tar HEAD | tar -x -C "/tmp/pakz-build/Tools/tg5040/$(PAK_NAME).pak"
+	while IFS= read -r file; do cp -r "$$file" "/tmp/pakz-build/Tools/tg5040/$(PAK_NAME).pak/"; done < .gitarchiveinclude
+	cd /tmp/pakz-build && zip -r "$(PWD)/dist/$(PAK_NAME).pakz" Tools/
+	rm -rf /tmp/pakz-build
