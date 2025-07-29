@@ -60,7 +60,7 @@ release-pakz: build
 	mkdir -p "/tmp/pakz-build/$(PAK_DIR)/$(PAK_NAME).pak"
 	git archive --format=tar HEAD | tar -x -C "/tmp/pakz-build/$(PAK_DIR)/$(PAK_NAME).pak"
 	while IFS= read -r file; do cp --parents -r "$$file" "/tmp/pakz-build/$(PAK_DIR)/$(PAK_NAME).pak/"; done < .gitarchiveinclude
-	mkdir -p "/tmp/pakz-build/Roms/Ports $(PAK_NAME)"
-	touch "/tmp/pakz-build/Roms/Ports $(PAK_NAME)/0) Portmaster.sh"
+	mkdir -p "/tmp/pakz-build/Roms/Ports ($(PAK_NAME))"
+	touch "/tmp/pakz-build/Roms/Ports ($(PAK_NAME))/0) Portmaster.sh"
 	cd /tmp/pakz-build && zip -r "$(PWD)/dist/$(PAK_NAME).pakz" .
 	rm -rf /tmp/pakz-build
