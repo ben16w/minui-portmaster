@@ -1,4 +1,5 @@
 PAK_NAME := $(shell jq -r .name pak.json)
+TOOLS_DIR := "Tools/tg5040"
 
 MINUI_POWER_CONTROL_VERSION := 2.0.1
 PORTMASTER_VERSION := 2025.05.07-1152
@@ -56,8 +57,8 @@ release: build release-pakz
 release-pakz: build
 	mkdir -p dist
 	rm -rf /tmp/pakz-build
-	mkdir -p "/tmp/pakz-build/Tools/tg5040/$(PAK_NAME).pak"
-	git archive --format=tar HEAD | tar -x -C "/tmp/pakz-build/Tools/tg5040/$(PAK_NAME).pak"
-	while IFS= read -r file; do cp -r "$$file" "/tmp/pakz-build/Tools/tg5040/$(PAK_NAME).pak/"; done < .gitarchiveinclude
-	cd /tmp/pakz-build && zip -r "$(PWD)/dist/$(PAK_NAME).pakz" Tools/
+	mkdir -p "/tmp/pakz-build/$(TOOLS_DIR)/$(PAK_NAME).pak"
+	git archive --format=tar HEAD | tar -x -C "/tmp/pakz-build/$(TOOLS_DIR)/$(PAK_NAME).pak"
+	while IFS= read -r file; do cp -r "$$file" "/tmp/pakz-build/$(TOOLS_DIR)/$(PAK_NAME).pak/"; done < .gitarchiveinclude
+	cd /tmp/pakz-build && zip -r "$(PWD)/dist/$(PAK_NAME).pakz" .
 	rm -rf /tmp/pakz-build
