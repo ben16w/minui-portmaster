@@ -206,6 +206,46 @@ find_shell_scripts() {
     done
 }
 
+modify_squashfs_shebang() {
+    squashfs_file="$1"
+    tmpdir=$(mktemp -d) || return 1
+
+    unsquashfs -d "$tmpdir" "$squashfs_file" || {
+        echo "Failed to extract squashfs"
+        rm -rf "$tmpdir"
+        return 1
+    }
+
+    find_shell_scripts "$tmpdir" | update_shebangs_from_list
+
+    mksquashfs "$tmpdir" "$squashfs_file" -noappend -comp xz > /dev/null 2>&1 || {
+        echo "Failed to rebuild squashfs"
+        rm -rf "$tmpdir"
+        return 1
+    }
+
+    rm -rf "$tmpdir"
+    echo "SquashFS modified successfully."
+}
+
+process_squashfs_files() {
+    search_dir="$1"
+
+    find "$search_dir" -type f -name "*.squashfs" | while read -r squashfs_file; do
+        completed_file="${squashfs_file}.completed"
+        if [ -f "$completed_file" ]; then
+            echo "Skipping $squashfs_file (already completed)"
+            continue
+        fi
+        echo "Processing $squashfs_file"
+        if modify_squashfs_shebang "$squashfs_file"; then
+            touch "$completed_file"
+        else
+            echo "Failed to process $squashfs_file"
+        fi
+    done
+}
+
 replace_progressor_binaries() {
     search_path="$1"
     progressor_src="$PAK_DIR/files/progressor"
@@ -317,6 +357,8 @@ main() {
         EMU_DIR "$EMU_DIR"
     python3 "$PAK_DIR/src/replace_string_in_file.py" "$EMU_DIR/control.txt" \
         TEMP_DATA_DIR "${TEMP_DATA_DIR#/}"
+
+    process_squashfs_files "$EMU_DIR/packs"
 
     minui-power-control &
 
