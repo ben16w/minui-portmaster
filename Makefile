@@ -2,7 +2,7 @@ PAK_NAME := $(shell jq -r .name pak.json)
 PAK_DIR := "Emus/tg5040"
 
 MINUI_POWER_CONTROL_VERSION := 2.0.1
-PORTMASTER_VERSION := 2025.05.07-1152
+PORTMASTER_VERSION := 2025.07.14-1510
 MINUI_PRESENTER_VERSION := 0.9.0
 JQ_VERSION := 1.7.1
 
@@ -74,7 +74,7 @@ release-pakz: build
 	mkdir -p "/tmp/pakz-build/$(PAK_DIR)/$(PAK_NAME).pak/bin"
 	tar -xf files/bin.tar.gz -C "/tmp/pakz-build/$(PAK_DIR)/$(PAK_NAME).pak/bin"
 	rm /tmp/pakz-build/$(PAK_DIR)/$(PAK_NAME).pak/files/bin.tar.gz
-	unzip -oq "PortMaster/pylibs.zip" -d "/tmp/pakz-build/$(PAK_DIR)/$(PAK_NAME).pak/PortMaster/pylibs"
+	unzip -oq "PortMaster/pylibs.zip" -d "/tmp/pakz-build/$(PAK_DIR)/$(PAK_NAME).pak/PortMaster"
 	rm -f /tmp/pakz-build/$(PAK_DIR)/$(PAK_NAME).pak/PortMaster/pylibs.zip
 	cd /tmp/pakz-build && zip -r "$(PWD)/dist/$(PAK_NAME).pakz" .
 	rm -rf /tmp/pakz-build
