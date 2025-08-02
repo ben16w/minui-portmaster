@@ -74,5 +74,7 @@ release-pakz: build
 	mkdir -p "/tmp/pakz-build/$(PAK_DIR)/$(PAK_NAME).pak/bin"
 	tar -xf files/bin.tar.gz -C "/tmp/pakz-build/$(PAK_DIR)/$(PAK_NAME).pak/bin"
 	rm /tmp/pakz-build/$(PAK_DIR)/$(PAK_NAME).pak/files/bin.tar.gz
+	unzip -oq "PortMaster/pylibs.zip" -d "/tmp/pakz-build/$(PAK_DIR)/$(PAK_NAME).pak/PortMaster/pylibs"
+	rm -f /tmp/pakz-build/$(PAK_DIR)/$(PAK_NAME).pak/PortMaster/pylibs.zip
 	cd /tmp/pakz-build && zip -r "$(PWD)/dist/$(PAK_NAME).pakz" .
 	rm -rf /tmp/pakz-build

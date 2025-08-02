@@ -33,6 +33,8 @@ PortMaster is designed and tested for the following platforms:
 
 ## Installation
 
+### Minui Installation
+
 1. Mount your MinUI SD card to your computer.
 2. Download the latest [release](https://github.com/ben16w/minui-portmaster/releases) from GitHub. Make sure to download the file named `PORTS.pak.zip` and not the `.pakz` file.
 3. Copy the zip file to the correct platform folder in the "/Emus" folder on the SD card. Please ensure the new zip file name is `PORTS.pak.zip`.
@@ -43,6 +45,14 @@ PortMaster is designed and tested for the following platforms:
 8. Eject your SD card and insert it back into your MinUI device.
 
 Note: The `<PLATFORM>` folder name is based on the name of your device. For example, if you are using a TrimUI Brick, the folder is `tg5040`.
+
+### NextUI Installation
+
+1. Mount your NextUI SD card to your computer.
+2. Download the latest `.pakz` file from the [releases page](https://github.com/ben16w/minui-portmaster/releases). It will be named `PORTS.pakz`.
+3. Copy the `.pakz` file to the root of your SD card.
+4. Eject your SD card and insert it back into your NextUI device.
+5. Restart your device. NextUI will automatically detect and install the new Pak.
 
 ## Usage
 
