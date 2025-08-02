@@ -74,13 +74,17 @@ jobs:
       - name: Attest Build Provenance
         uses: actions/attest-build-provenance@v2.4.0
         with:
-          subject-path: "dist/${{ steps.pak-name.outputs.PAK_NAME }}.pak.zip"
+          subject-path: |
+            dist/${{ steps.pak-name.outputs.PAK_NAME }}.pak.zip
+            dist/${{ steps.pak-name.outputs.PAK_NAME }}.pakz
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4.6.2
         with:
-          name: "${{ steps.pak-name.outputs.PAK_NAME }}.pak.zip"
-          path: "dist/${{ steps.pak-name.outputs.PAK_NAME }}.pak.zip"
+          name: "${{ steps.pak-name.outputs.PAK_NAME }}-releases"
+          path: |
+            dist/${{ steps.pak-name.outputs.PAK_NAME }}.pak.zip
+            dist/${{ steps.pak-name.outputs.PAK_NAME }}.pakz
 
   release:
     name: release
@@ -103,13 +107,17 @@ jobs:
       - name: Download Artifacts
         uses: actions/download-artifact@v4.3.0
         with:
-          name: "${{ steps.pak-name.outputs.PAK_NAME }}.pak.zip"
+          name: "${{ steps.pak-name.outputs.PAK_NAME }}-releases"
           path: "dist"
 
-      - name: Validate Artifact exists
+      - name: Validate Artifacts exist
         run: |
           if [ ! -f "dist/${{ steps.pak-name.outputs.PAK_NAME }}.pak.zip" ]; then
-            echo "Artifact does not exist"
+            echo "Artifact .pak.zip does not exist"
+            exit 1
+          fi
+          if [ ! -f "dist/${{ steps.pak-name.outputs.PAK_NAME }}.pakz" ]; then
+            echo "Artifact .pakz does not exist"
             exit 1
           fi
 
