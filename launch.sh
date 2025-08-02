@@ -182,6 +182,7 @@ update_file_shebang() {
         echo "#!/usr/bin/env bash" > "$file.new"
         cat "$file.tmp" >> "$file.new"
         mv "$file.new" "$file"
+        chmod +x "$file"
         rm -f "$file.tmp"
     else
         echo "No need to update shebang for $file"
@@ -202,6 +203,50 @@ find_shell_scripts() {
         | while read -r file; do
         if head -n 1 "$file" | grep -qE '^#!.*(sh|bash)'; then
             echo "$file"
+        fi
+    done
+}
+
+modify_squashfs_shebang() {
+    squashfs_file="$1"
+    tmpdir=$(mktemp -d) || return 1
+
+    echo "Modifying shebangs in $squashfs_file"
+    if ! unsquashfs -d "$tmpdir" "$squashfs_file"; then
+        echo "Failed to extract squashfs"
+        rm -rf "$tmpdir"
+        return 1
+    fi
+
+    find_shell_scripts "$tmpdir" | update_shebangs_from_list
+    # controlfolder="/mnt/SDCARD/Emus/tg5040/PORTS.pak/PortMaster"
+
+    echo "Rebuilding squashfs file $squashfs_file"
+    rm -f "$squashfs_file"
+    if !  mksquashfs "$tmpdir" "$squashfs_file" -noappend -comp xz; then
+        echo "Failed to rebuild squashfs"
+        rm -rf "$tmpdir"
+        return 1
+    fi
+
+    rm -rf "$tmpdir"
+}
+
+process_squashfs_files() {
+    search_dir="$1"
+
+    echo "Processing SquashFS files in $search_dir"
+    find "$search_dir" -type f -name "*.squashfs" | while read -r squashfs_file; do
+        processed_marker="${squashfs_file}.processed"
+        if [ -f "$processed_marker" ]; then
+            echo "Skipping $squashfs_file, already processed"
+            continue
+        fi
+        echo "Processing $squashfs_file"
+        if modify_squashfs_shebang "$squashfs_file"; then
+            touch "$processed_marker"
+        else
+            echo "Failed to process $squashfs_file"
         fi
     done
 }
@@ -317,6 +362,8 @@ main() {
         EMU_DIR "$EMU_DIR"
     python3 "$PAK_DIR/src/replace_string_in_file.py" "$EMU_DIR/control.txt" \
         TEMP_DATA_DIR "${TEMP_DATA_DIR#/}"
+
+    process_squashfs_files "$EMU_DIR/libs"
 
     minui-power-control &
 
