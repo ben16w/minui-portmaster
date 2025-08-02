@@ -219,6 +219,7 @@ modify_squashfs_shebang() {
     fi
 
     find_shell_scripts "$tmpdir" | update_shebangs_from_list
+    # controlfolder="/mnt/SDCARD/Emus/tg5040/PORTS.pak/PortMaster"
 
     echo "Rebuilding squashfs file $squashfs_file"
     rm -f "$squashfs_file"
