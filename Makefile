@@ -6,8 +6,6 @@ PORTMASTER_VERSION := 2025.07.14-1510
 MINUI_PRESENTER_VERSION := 0.9.0
 JQ_VERSION := 1.7.1
 
-RELEASE_VERSION := $(shell jq -r .version pak.json)
-
 clean:
 	find bin -type f ! -name '.gitkeep' -delete
 	find lib -type f ! -name '.gitkeep' -delete
