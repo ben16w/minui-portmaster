@@ -196,6 +196,15 @@ update_shebangs_from_list() {
     done
 }
 
+replace_string_in_files() {
+    old_string="$1"
+    new_string="$2"
+    while IFS= read -r file || [ -n "$file" ]; do
+        [ -z "$file" ] && continue
+        python3 "$PAK_DIR/src/replace_string_in_file.py" "$file" "$old_string" "$new_string"
+    done
+}
+
 find_shell_scripts() {
     search_path="$1"
     find "$search_path" -type f -executable \
@@ -339,6 +348,8 @@ main() {
         echo "Starting PortMaster with ROM: $ROM_PATH"
         show_message "Starting ${ROM_NAME%.*}..." 120 &
         find_shell_scripts "$PORTS_DIR" | update_shebangs_from_list
+        find_shell_scripts "$PORTS_DIR" | replace_string_in_files \
+            "/roms/ports/PortMaster" "$EMU_DIR"
         update_file_shebang "$ROM_PATH"
         replace_progressor_binaries "$PORTS_DIR"
         "$PAK_DIR/bin/busybox" bash "$ROM_PATH"
