@@ -279,7 +279,18 @@ main() {
         exit 1
     fi
 
+    cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor \
+        >"$USERDATA_PATH/PORTS-portmaster/cpu_governor.txt"
+    cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq \
+        >"$USERDATA_PATH/PORTS-portmaster/cpu_min_freq.txt"
+    cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq \
+        >"$USERDATA_PATH/PORTS-portmaster/cpu_max_freq.txt"
+    echo ondemand >/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+    echo 1608000 >/sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq
+    echo 1800000 >/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
+
     echo "Starting PortMaster with ROM: $ROM_PATH"
+    show_message "Starting, please wait..." forever
 
     if [ -f "$PAK_DIR/files/bin.tar.gz" ] || [ -f "$PAK_DIR/files/lib.tar.gz" ]; then
         show_message "Unpacking files, please wait..." forever
@@ -291,18 +302,6 @@ main() {
         create_busybox_wrappers
         touch "$PAK_DIR/bin/busybox_wrappers.created"
     fi
-
-    show_message "Starting, please wait..." forever
-
-    cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor \
-        >"$USERDATA_PATH/PORTS-portmaster/cpu_governor.txt"
-    cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq \
-        >"$USERDATA_PATH/PORTS-portmaster/cpu_min_freq.txt"
-    cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq \
-        >"$USERDATA_PATH/PORTS-portmaster/cpu_max_freq.txt"
-    echo ondemand >/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
-    echo 1608000 >/sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq
-    echo 1800000 >/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
 
     if [ ! -f "$EMU_DIR/config/config.json" ]; then
         echo "Copying config.json to $EMU_DIR/config"
@@ -351,17 +350,16 @@ main() {
             rm -f "$EMU_DIR/.pugwash-reboot"
         done
 
-        show_message "Closing PortMaster..." &
+        show_message "Applying changes..." &
         find_shell_scripts "$ROM_DIR" | update_shebangs_from_list
         find_shell_scripts "$ROM_DIR" | replace_string_in_files "/roms/ports/PortMaster" "$EMU_DIR"
         replace_progressor_binaries "$PORTS_DIR"
+        copy_artwork
     else
         echo "Starting PortMaster with port: $ROM_PATH"
         show_message "Starting ${ROM_NAME%.*}..." 120 &
         "$PAK_DIR/bin/busybox" bash "$ROM_PATH"
     fi
-
-    copy_artwork
 }
 
 main "$@"
