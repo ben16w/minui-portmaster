@@ -183,6 +183,7 @@ update_file_shebang() {
         echo "#!/usr/bin/env bash" > "$file.new"
         cat "$file.tmp" >> "$file.new"
         mv "$file.new" "$file"
+        chmod +x "$file"
         rm -f "$file.tmp"
     else
         echo "No need to update shebang for $file"
@@ -284,7 +285,11 @@ main() {
         show_message "Unpacking files, please wait..." forever
         unpack_tar "$PAK_DIR/files/bin.tar.gz" "$PAK_DIR/bin"
         unpack_tar "$PAK_DIR/files/lib.tar.gz" "$PAK_DIR/lib"
+    fi
+
+    if [ ! -f "$PAK_DIR/bin/busybox_wrappers_created" ]; then
         create_busybox_wrappers
+        touch "$PAK_DIR/bin/busybox_wrappers_created"
     fi
 
     show_message "Starting, please wait..." forever
@@ -347,14 +352,12 @@ main() {
         done
 
         show_message "Closing PortMaster..." &
-        find_shell_scripts "$PORTS_DIR" | update_shebangs_from_list
-        find_shell_scripts "$PORTS_DIR" | replace_string_in_files \
-            "/roms/ports/PortMaster" "$EMU_DIR"
+        find_shell_scripts "$ROM_DIR" | update_shebangs_from_list
+        find_shell_scripts "$ROM_DIR" | replace_string_in_files "/roms/ports/PortMaster" "$EMU_DIR"
         replace_progressor_binaries "$PORTS_DIR"
     else
         echo "Starting PortMaster with port: $ROM_PATH"
         show_message "Starting ${ROM_NAME%.*}..." 120 &
-        update_file_shebang "$ROM_PATH"
         "$PAK_DIR/bin/busybox" bash "$ROM_PATH"
     fi
 
