@@ -287,9 +287,9 @@ main() {
         unpack_tar "$PAK_DIR/files/lib.tar.gz" "$PAK_DIR/lib"
     fi
 
-    if [ ! -f "$PAK_DIR/bin/busybox_wrappers_created" ]; then
+    if [ ! -f "$PAK_DIR/bin/busybox_wrappers.created" ]; then
         create_busybox_wrappers
-        touch "$PAK_DIR/bin/busybox_wrappers_created"
+        touch "$PAK_DIR/bin/busybox_wrappers.created"
     fi
 
     show_message "Starting, please wait..." forever
