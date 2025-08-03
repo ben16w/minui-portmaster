@@ -350,7 +350,7 @@ main() {
             rm -f "$EMU_DIR/.pugwash-reboot"
         done
 
-        show_message "Applying changes..." &
+        show_message "Applying changes, please wait..." &
         find_shell_scripts "$ROM_DIR" | update_shebangs_from_list
         find_shell_scripts "$ROM_DIR" | replace_strings_in_files "/roms/ports/PortMaster" "$EMU_DIR"
         replace_progressor_binaries "$PORTS_DIR"
