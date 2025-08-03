@@ -48,6 +48,8 @@ Note: The `<PLATFORM>` folder name is based on the name of your device. For exam
 
 ### NextUI Installation
 
+PortMaster can be installed on NextUI devices using the [Pak Store](https://github.com/UncleJunVIP/nextui-pak-store), which is the recommended and easiest method. Alternatively, you can install it manually by following these steps:
+
 1. Mount your NextUI SD card to your computer.
 2. Download the latest `.pakz` file from the [releases page](https://github.com/ben16w/minui-portmaster/releases). It will be named `PORTS.pakz`.
 3. Copy the `.pakz` file to the root of your SD card.
