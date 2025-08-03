@@ -22,7 +22,8 @@ export SSL_CERT_FILE="$PAK_DIR/files/ca-certificates.crt"
 export SDL_GAMECONTROLLERCONFIG_FILE="$EMU_DIR/gamecontrollerdb.txt"
 export PYSDL2_DLL_PATH="/usr/trimui/lib"
 export HOME="$SHARED_USERDATA_PATH/PORTS-portmaster"
-export XDG_DATA_HOME="$PAK_DIR"
+export XDG_DATA_HOME="$HOME/.local/share"
+mkdir -p "$XDG_DATA_HOME"
 
 [ -z "$1" ] && exit 1
 ROM_PATH="$1"
