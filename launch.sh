@@ -197,7 +197,7 @@ update_shebangs_from_list() {
     done
 }
 
-replace_string_in_files() {
+replace_strings_in_files() {
     old_string="$1"
     new_string="$2"
     while IFS= read -r file || [ -n "$file" ]; do
@@ -352,7 +352,7 @@ main() {
 
         show_message "Applying changes..." &
         find_shell_scripts "$ROM_DIR" | update_shebangs_from_list
-        find_shell_scripts "$ROM_DIR" | replace_string_in_files "/roms/ports/PortMaster" "$EMU_DIR"
+        find_shell_scripts "$ROM_DIR" | replace_strings_in_files "/roms/ports/PortMaster" "$EMU_DIR"
         replace_progressor_binaries "$PORTS_DIR"
         copy_artwork
     else
