@@ -33,7 +33,7 @@ PortMaster is designed and tested for the following platforms:
 
 ## Installation
 
-### Minui Installation
+### MinUI Installation
 
 1. Mount your MinUI SD card to your computer.
 2. Download the latest [release](https://github.com/ben16w/minui-portmaster/releases) from GitHub. Make sure to download the file named `PORTS.pak.zip` and not the `.pakz` file.
@@ -100,7 +100,6 @@ Artwork for ports will automatically be displayed in NextUI. This feature can be
 
 ## Known Issues
 
-- When you launch PortMaster or a port, a `/mnt/SDCARD/.PortsTemp/ports` folder is created. It is usually deleted when PortMaster closes, but sometimes it may remain. You can safely delete the `.PortsTemp` folder if PortMaster is not running and the `/mnt/SDCARD/.PortsTemp/ports` folder is empty.
 - Some loading screens can take a long time to complete, sometimes up to 10 minutes. This is most noticeable the first time you run PortMaster or a port, as files need to be unpacked and patched. Please be patient and allow the process to complete.
 - To check which ports are currently working or have known issues with this pak, please visit the [Ports Status wiki page](https://github.com/ben16w/minui-portmaster/wiki/Ports-Status).
 
