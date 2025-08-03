@@ -201,6 +201,7 @@ replace_string_in_files() {
     new_string="$2"
     while IFS= read -r file || [ -n "$file" ]; do
         [ -z "$file" ] && continue
+        echo "Replacing '$old_string' with '$new_string' in $file"
         python3 "$PAK_DIR/src/replace_string_in_file.py" "$file" "$old_string" "$new_string"
     done
 }
@@ -332,7 +333,7 @@ main() {
 
     if echo "$ROM_NAME" | grep -qi "portmaster"; then
         echo "Starting PortMaster GUI"
-        show_message "Starting PortMaster GUI..." 10 &
+        show_message "Starting PortMaster..." 10 &
         rm -f "$EMU_DIR/.pugwash-reboot"
 
         while true; do
@@ -344,14 +345,16 @@ main() {
 
             rm -f "$EMU_DIR/.pugwash-reboot"
         done
-    else
-        echo "Starting PortMaster with ROM: $ROM_PATH"
-        show_message "Starting ${ROM_NAME%.*}..." 120 &
+
+        show_message "Closing PortMaster..." &
         find_shell_scripts "$PORTS_DIR" | update_shebangs_from_list
         find_shell_scripts "$PORTS_DIR" | replace_string_in_files \
             "/roms/ports/PortMaster" "$EMU_DIR"
-        update_file_shebang "$ROM_PATH"
         replace_progressor_binaries "$PORTS_DIR"
+    else
+        echo "Starting PortMaster with port: $ROM_PATH"
+        show_message "Starting ${ROM_NAME%.*}..." 120 &
+        update_file_shebang "$ROM_PATH"
         "$PAK_DIR/bin/busybox" bash "$ROM_PATH"
     fi
 
