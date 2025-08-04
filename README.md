@@ -12,10 +12,7 @@ A MinUI and NextUI Emu Pak for PortMaster which includes everything needed and r
 
 ## Description
 
-MinUI PortMaster is an Emu Pak for [MinUI](https://github.com/shauninman/MinUI) and [NextUI](https://github.com/LoveRetro/NextUI), wrapping up [PortMaster](https://portmaster.games/), which organizes and simplifies the installation process for hundreds of PC ports. MinUI PortMaster is a standalone Emu Pak and does not require any additional software to run, for example, [TRIMUI_EX](https://github.com/kloptops/TRIMUI_EX). Everything is included in the download and only a few steps are needed to install.
-
-> [!IMPORTANT]
-> MinUI PortMaster has been designed to run on TrimUI devices only.
+MinUI PortMaster is an Emu Pak for [MinUI](https://github.com/shauninman/MinUI) and [NextUI](https://github.com/LoveRetro/NextUI), wrapping up [PortMaster](https://portmaster.games/), which organizes and simplifies the installation process of PC ports. MinUI PortMaster is a standalone Emu Pak and doesn't require anything additional to run, for example, [TRIMUI_EX](https://github.com/kloptops/TRIMUI_EX). Everything is included in the download and only a few steps are needed to install.
 
 ## Features
 
@@ -31,11 +28,12 @@ MinUI PortMaster is designed and tested for the following platforms:
 
 - `tg5040`: Trimui Brick (formerly `tg3040`), Trimui Smart Pro
 
+> [!IMPORTANT]
+> MinUI PortMaster has been designed to run on TrimUI devices only.
+
 ## Disclaimer
 
-This project is not officially supported by PortMaster.  
-Please do **not** report issues related to MinUI PortMaster to the official PortMaster project or its maintainers.  
-If you encounter any issues, please refer to the [Troubleshooting](#troubleshooting) section.
+This project is not officially supported by PortMaster. Please do **not** report issues related to MinUI PortMaster to the official PortMaster project or its maintainers. If you encounter any issues, refer to the [Troubleshooting](#troubleshooting) section instead.
 
 ## Installation
 
@@ -68,14 +66,12 @@ The recommended method to install PortMaster on NextUI devices is to use the [Pa
 - Browse available ports and install new ones.
 - Installed ports will appear under the Ports entry in MinUI/NextUI.
 
-> [!IMPORTANT]
+> [!TIP]
 > Not all ports are ready to run immediately after installation, and some may require additional steps. This usually involves copying files from a purchased copy of a game. The files will need to be copied to the corresponding port folder in `/Roms/Ports (PORTS)/.ports` on the SD card. Please refer to the port's documentation at the [PortMaster](https://portmaster.games/games.html) website for specific instructions on how to install each port.
 
 ## Updating
 
-### Safe Update
-
-This is the recommended method for updating PortMaster to a new version. It keeps your PortMaster data and settings intact while updating everything else. It is the method used when updating the pak via the [NextUI Pak Store](https://github.com/UncleJunVIP/nextui-pak-store).
+This is the recommended method for updating PortMaster to a new version. It keeps your PortMaster data and settings intact while updating everything else. It is also the method used when updating the pak via the [NextUI Pak Store](https://github.com/UncleJunVIP/nextui-pak-store).
 
 1. Mount your MinUI SD card to your computer.
 2. Download the latest [release](https://github.com/ben16w/minui-portmaster/releases) from GitHub. It will be named `PORTS.pak.zip`.
@@ -85,17 +81,15 @@ This is the recommended method for updating PortMaster to a new version. It keep
 6. Copy the entire contents of the new `PORTS.pak` folder (the `PortMaster` folder will be missing) to the existing `PORTS.pak` folder on your SD card. **Overwrite any files when prompted.**
 7. Eject your SD card and insert it back into your MinUI device.
 
-### Full Update (Not Recommended)
+### Alternative Update Method
 
-This method replaces the entire `PORTS.pak` folder on your SD card with a new one. It is quicker, but it's not recommended as PortMaster settings and data will be lost. This method is only recommended if you are having issues after trying the Safe Update method.
+This method replaces the entire `PORTS.pak` folder on your SD card with a new one. This method is only recommended if you are having issues after trying the Safe Update method.
 
 1. Mount your MinUI SD card to your computer.
-2. Download the latest [release](https://github.com/ben16w/minui-portmaster/releases) from GitHub. It will be named `PORTS.pak.zip`.
-3. Delete the entire old `PORTS.pak` folder from `/Emus/<PLATFORM>/` on your SD card.
-4. Copy the new `PORTS.pak` folder (from the extracted zip) to `/Emus/<PLATFORM>/` on your SD card.
-5. Eject your SD card and insert it back into your MinUI device.
+2. Delete the entire old `PORTS.pak` folder from `/Emus/<PLATFORM>/` on your SD card.
+3. Follow the steps in the [MinUI Installation](#minui-installation) section to copy the updated `PORTS.pak.zip` file to your SD card.
 
-> [!IMPORTANT]
+> [!TIP]
 > This method may remove some dependencies required by your installed ports. If a port does not work after updating, launch PortMaster, go to **Manage Ports**, select the port that is not working, and choose **Reinstall**. This will restore any missing files for that port.
 
 ## Deep Sleep & Shutdown
