@@ -108,7 +108,7 @@ Artwork for ports will automatically be displayed in NextUI. This feature can be
 ## Troubleshooting
 
 - Log files are stored in `/.userdata/tg5040/logs/PORTS.txt` for debugging.
-- If you encounter issues or bugs, please open an issue on this GitHub repository with details and a copy of the log file.
+- If you encounter problems or bugs, please [open an issue](https://github.com/ben16w/minui-portmaster/issues/new) in this GitHub repository with details and a copy of the log file.
 - For general support or questions, join the [NextUI Discord](https://discord.gg/HKd7wqZk3h) and post in the [Standalone PortMaster](https://discord.com/channels/1347893601337737338/1365382235544485959) channel for assistance.
 
 ## Thanks
