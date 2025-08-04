@@ -33,8 +33,10 @@ PortMaster is designed and tested for the following platforms:
 
 ## Installation
 
+### MinUI Installation
+
 1. Mount your MinUI SD card to your computer.
-2. Download the latest [release](https://github.com/ben16w/minui-portmaster/releases) from GitHub. It will be named `PORTS.pak.zip`.
+2. Download the latest [release](https://github.com/ben16w/minui-portmaster/releases) from GitHub. Make sure to download the file named `PORTS.pak.zip` and not the `.pakz` file.
 3. Copy the zip file to the correct platform folder in the "/Emus" folder on the SD card. Please ensure the new zip file name is `PORTS.pak.zip`.
 4. Extract the zip in place, then delete the zip file.
 5. Confirm that there is a `/Emus/<PLATFORM>/PORTS.pak/launch.sh` file on your SD card.
@@ -43,6 +45,16 @@ PortMaster is designed and tested for the following platforms:
 8. Eject your SD card and insert it back into your MinUI device.
 
 Note: The `<PLATFORM>` folder name is based on the name of your device. For example, if you are using a TrimUI Brick, the folder is `tg5040`.
+
+### NextUI Installation
+
+The recommended method to install PortMaster on NextUI devices is to use the [Pak Store](https://github.com/UncleJunVIP/nextui-pak-store). Alternatively, you can install it manually by following these steps:
+
+1. Mount your NextUI SD card to your computer.
+2. Download the latest `.pakz` file from the [releases page](https://github.com/ben16w/minui-portmaster/releases). It will be named `PORTS.pakz`.
+3. Copy the `.pakz` file to the root of your SD card.
+4. Eject your SD card and insert it back into your NextUI device.
+5. Restart your device. NextUI will automatically detect and install the new Pak.
 
 ## Usage
 
@@ -90,7 +102,6 @@ Artwork for ports will automatically be displayed in NextUI. This feature can be
 
 ## Known Issues
 
-- When you launch PortMaster or a port, a `/mnt/SDCARD/.PortsTemp/ports` folder is created. It is usually deleted when PortMaster closes, but sometimes it may remain. You can safely delete the `.PortsTemp` folder if PortMaster is not running and the `/mnt/SDCARD/.PortsTemp/ports` folder is empty.
 - Some loading screens can take a long time to complete, sometimes up to 10 minutes. This is most noticeable the first time you run PortMaster or a port, as files need to be unpacked and patched. Please be patient and allow the process to complete.
 - To check which ports are currently working or have known issues with this pak, please visit the [Ports Status wiki page](https://github.com/ben16w/minui-portmaster/wiki/Ports-Status).
 

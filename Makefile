@@ -1,7 +1,8 @@
 PAK_NAME := $(shell jq -r .name pak.json)
+PAK_DIR := "Emus/tg5040"
 
 MINUI_POWER_CONTROL_VERSION := 2.0.1
-PORTMASTER_VERSION := 2025.05.07-1152
+PORTMASTER_VERSION := 2025.07.14-1510
 MINUI_PRESENTER_VERSION := 0.9.0
 JQ_VERSION := 1.7.1
 SQUASHFS_VERSION := 4.6.1
@@ -60,8 +61,31 @@ bin/unsquashfs:
 	chmod +x bin/unsquashfs
 	curl -sSL -o bin/unsquashfs.LICENSE "https://github.com/VHSgunzo/squashfs-tools-static/raw/refs/heads/main/LICENSE"
 
-release: build
+release: build release-pak release-pakz
+	@echo "Release $(RELEASE_VERSION) complete"
+
+release-pak: build
 	mkdir -p dist
 	git archive --format=zip --output "dist/$(PAK_NAME).pak.zip" HEAD
 	while IFS= read -r file; do zip -r "dist/$(PAK_NAME).pak.zip" "$$file"; done < .gitarchiveinclude
 	ls -lah dist
+
+release-pakz: build
+	mkdir -p dist
+	rm -f dist/$(PAK_NAME).pakz
+	rm -rf /tmp/pakz-build
+	mkdir -p "/tmp/pakz-build/$(PAK_DIR)/$(PAK_NAME).pak"
+	git archive --format=tar HEAD | tar -x -C "/tmp/pakz-build/$(PAK_DIR)/$(PAK_NAME).pak"
+	while IFS= read -r file; do cp --parents -r "$$file" "/tmp/pakz-build/$(PAK_DIR)/$(PAK_NAME).pak/"; done < .gitarchiveinclude
+	mkdir -p "/tmp/pakz-build/Roms/Ports ($(PAK_NAME))"
+	touch "/tmp/pakz-build/Roms/Ports ($(PAK_NAME))/0) Portmaster.sh"
+	mkdir -p "/tmp/pakz-build/$(PAK_DIR)/$(PAK_NAME).pak/lib"
+	tar -xf files/lib.tar.gz -C "/tmp/pakz-build/$(PAK_DIR)/$(PAK_NAME).pak/lib"
+	rm /tmp/pakz-build/$(PAK_DIR)/$(PAK_NAME).pak/files/lib.tar.gz
+	mkdir -p "/tmp/pakz-build/$(PAK_DIR)/$(PAK_NAME).pak/bin"
+	tar -xf files/bin.tar.gz -C "/tmp/pakz-build/$(PAK_DIR)/$(PAK_NAME).pak/bin"
+	rm /tmp/pakz-build/$(PAK_DIR)/$(PAK_NAME).pak/files/bin.tar.gz
+	unzip -oq "PortMaster/pylibs.zip" -d "/tmp/pakz-build/$(PAK_DIR)/$(PAK_NAME).pak/PortMaster"
+	rm -f /tmp/pakz-build/$(PAK_DIR)/$(PAK_NAME).pak/PortMaster/pylibs.zip
+	cd /tmp/pakz-build && zip -r "$(PWD)/dist/$(PAK_NAME).pakz" .
+	rm -rf /tmp/pakz-build

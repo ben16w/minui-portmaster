@@ -22,13 +22,14 @@ export SSL_CERT_FILE="$PAK_DIR/files/ca-certificates.crt"
 export SDL_GAMECONTROLLERCONFIG_FILE="$EMU_DIR/gamecontrollerdb.txt"
 export PYSDL2_DLL_PATH="/usr/trimui/lib"
 export HOME="$SHARED_USERDATA_PATH/PORTS-portmaster"
-export XDG_DATA_HOME="$PAK_DIR"
+export XDG_DATA_HOME="$HOME/.local/share"
+mkdir -p "$XDG_DATA_HOME"
 
 [ -z "$1" ] && exit 1
 ROM_PATH="$1"
 ROM_DIR="$(dirname "$ROM_PATH")"
 ROM_NAME="$(basename "$ROM_PATH")"
-TEMP_DATA_DIR="$SDCARD_PATH/.PortsTemp"
+TEMP_DATA_DIR="$SDCARD_PATH/.ports_temp"
 PORTS_DIR="$ROM_DIR/.ports"
 
 export HM_TOOLS_DIR="$PAK_DIR"
@@ -196,6 +197,16 @@ update_shebangs_from_list() {
     done
 }
 
+replace_strings_in_files() {
+    old_string="$1"
+    new_string="$2"
+    while IFS= read -r file || [ -n "$file" ]; do
+        [ -z "$file" ] && continue
+        echo "Replacing '$old_string' with '$new_string' in $file"
+        python3 "$PAK_DIR/src/replace_string_in_file.py" "$file" "$old_string" "$new_string"
+    done
+}
+
 find_shell_scripts() {
     search_path="$1"
     find "$search_path" -type f -executable \
@@ -312,17 +323,6 @@ main() {
         exit 1
     fi
 
-    echo "Starting PortMaster with ROM: $ROM_PATH"
-
-    if [ -f "$PAK_DIR/files/bin.tar.gz" ] || [ -f "$PAK_DIR/files/lib.tar.gz" ]; then
-        show_message "Unpacking files, please wait..." forever
-        unpack_tar "$PAK_DIR/files/bin.tar.gz" "$PAK_DIR/bin"
-        unpack_tar "$PAK_DIR/files/lib.tar.gz" "$PAK_DIR/lib"
-        create_busybox_wrappers
-    fi
-
-    show_message "Starting, please wait..." forever
-
     cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor \
         >"$USERDATA_PATH/PORTS-portmaster/cpu_governor.txt"
     cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq \
@@ -332,6 +332,20 @@ main() {
     echo ondemand >/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
     echo 1608000 >/sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq
     echo 1800000 >/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
+
+    echo "Starting PortMaster with ROM: $ROM_PATH"
+    show_message "Starting, please wait..." forever
+
+    if [ -f "$PAK_DIR/files/bin.tar.gz" ] || [ -f "$PAK_DIR/files/lib.tar.gz" ]; then
+        show_message "Unpacking files, please wait..." forever
+        unpack_tar "$PAK_DIR/files/bin.tar.gz" "$PAK_DIR/bin"
+        unpack_tar "$PAK_DIR/files/lib.tar.gz" "$PAK_DIR/lib"
+    fi
+
+    if [ ! -f "$PAK_DIR/bin/busybox_wrappers.created" ]; then
+        create_busybox_wrappers
+        touch "$PAK_DIR/bin/busybox_wrappers.created"
+    fi
 
     if [ ! -f "$EMU_DIR/config/config.json" ]; then
         echo "Copying config.json to $EMU_DIR/config"
@@ -369,7 +383,7 @@ main() {
 
     if echo "$ROM_NAME" | grep -qi "portmaster"; then
         echo "Starting PortMaster GUI"
-        show_message "Starting PortMaster GUI..." 10 &
+        show_message "Starting PortMaster..." 10 &
         rm -f "$EMU_DIR/.pugwash-reboot"
 
         while true; do
@@ -381,16 +395,17 @@ main() {
 
             rm -f "$EMU_DIR/.pugwash-reboot"
         done
-    else
-        echo "Starting PortMaster with ROM: $ROM_PATH"
-        show_message "Starting ${ROM_NAME%.*}..." 120 &
-        find_shell_scripts "$PORTS_DIR" | update_shebangs_from_list
-        update_file_shebang "$ROM_PATH"
+
+        show_message "Applying changes, please wait..." &
+        find_shell_scripts "$ROM_DIR" | update_shebangs_from_list
+        find_shell_scripts "$ROM_DIR" | replace_strings_in_files "/roms/ports/PortMaster" "$EMU_DIR"
         replace_progressor_binaries "$PORTS_DIR"
+        copy_artwork
+    else
+        echo "Starting PortMaster with port: $ROM_PATH"
+        show_message "Starting ${ROM_NAME%.*}..." 120 &
         "$PAK_DIR/bin/busybox" bash "$ROM_PATH"
     fi
-
-    copy_artwork
 }
 
 main "$@"
