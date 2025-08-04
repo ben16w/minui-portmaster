@@ -83,7 +83,7 @@ The steps below will update PortMaster to a new version while preserving your da
 
 ### Alternative Method
 
-This method replaces the entire `PORTS.pak` folder on your SD card with a new one. It is only recommended if you are having issues after trying the steps above.
+Follow the steps below to replace the entire `PORTS.pak` folder on your SD card with a new one. It is only recommended if you are having issues after trying the steps above.
 
 1. Mount your MinUI SD card to your computer.
 2. Delete the entire old `PORTS.pak` folder from `/Emus/<PLATFORM>/` on your SD card.
@@ -98,7 +98,7 @@ Deep sleep is supported on compatible devices. Click the power button to enter d
 
 ## Artwork
 
-Artwork for ports will automatically be displayed in NextUI. This feature can be disabled by creating a file named `no-artwork` in the `/.userdata/<PLATFORM>/PORTS-portmaster` folder on your SD card. MinUI is currently not supported.
+Artwork for ports will automatically be displayed in NextUI. This feature can be disabled by creating a file named `no-artwork` in the `/.userdata/<PLATFORM>/PORTS-portmaster` folder on your SD card. Artwork is currently not supported in MinUI.
 
 ## Known Issues
 
