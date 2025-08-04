@@ -27,9 +27,15 @@ MinUI PortMaster is an Emu Pak for [MinUI](https://github.com/shauninman/MinUI) 
 
 ## Supported Platforms
 
-PortMaster is designed and tested for the following platforms:
+MinUI PortMaster is designed and tested for the following platforms:
 
 - `tg5040`: Trimui Brick (formerly `tg3040`), Trimui Smart Pro
+
+## Disclaimer
+
+This project is not officially supported by PortMaster.  
+Please do **not** report issues related to MinUI PortMaster to the official PortMaster project or its maintainers.  
+If you encounter any issues, please refer to the [Troubleshooting](#troubleshooting) section.
 
 ## Installation
 
@@ -108,7 +114,8 @@ Artwork for ports will automatically be displayed in NextUI. This feature can be
 ## Troubleshooting
 
 - Log files are stored in `/.userdata/tg5040/logs/PORTS.txt` for debugging.
-- If you encounter issues, please open an issue on this GitHub repository with the details and a copy of the log file.
+- If you encounter issues or bugs, please open an issue on this GitHub repository with details and a copy of the log file.
+- For general support or questions, join the [NextUI Discord](https://discord.gg/HKd7wqZk3h) and post in the [Standalone PortMaster](https://discord.com/channels/1347893601337737338/1365382235544485959) channel for assistance.
 
 ## Thanks
 
