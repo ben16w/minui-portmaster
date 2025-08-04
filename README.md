@@ -71,7 +71,7 @@ The recommended method to install PortMaster on NextUI devices is to use the [Pa
 
 ## Updating
 
-This is the recommended method for updating PortMaster to a new version. It keeps your PortMaster data and settings intact while updating everything else. It is also the method used when updating the pak via the [NextUI Pak Store](https://github.com/UncleJunVIP/nextui-pak-store).
+The steps below will update PortMaster to a new version while preserving your data and settings. It is also used when updating the pak through the [NextUI Pak Store](https://github.com/UncleJunVIP/nextui-pak-store).
 
 1. Mount your MinUI SD card to your computer.
 2. Download the latest [release](https://github.com/ben16w/minui-portmaster/releases) from GitHub. It will be named `PORTS.pak.zip`.
@@ -81,13 +81,13 @@ This is the recommended method for updating PortMaster to a new version. It keep
 6. Copy the entire contents of the new `PORTS.pak` folder (the `PortMaster` folder will be missing) to the existing `PORTS.pak` folder on your SD card. **Overwrite any files when prompted.**
 7. Eject your SD card and insert it back into your MinUI device.
 
-### Alternative Update Method
+### Alternative Method
 
-This method replaces the entire `PORTS.pak` folder on your SD card with a new one. This method is only recommended if you are having issues after trying the Safe Update method.
+This method replaces the entire `PORTS.pak` folder on your SD card with a new one. It is only recommended if you are having issues after trying the steps above.
 
 1. Mount your MinUI SD card to your computer.
 2. Delete the entire old `PORTS.pak` folder from `/Emus/<PLATFORM>/` on your SD card.
-3. Follow the steps in the [MinUI Installation](#minui-installation) section to copy the updated `PORTS.pak.zip` file to your SD card.
+3. Follow the steps in the [MinUI Installation](#minui-installation) section above to copy an updated `PORTS.pak` to your SD card.
 
 > [!TIP]
 > This method may remove some dependencies required by your installed ports. If a port does not work after updating, launch PortMaster, go to **Manage Ports**, select the port that is not working, and choose **Reinstall**. This will restore any missing files for that port.
