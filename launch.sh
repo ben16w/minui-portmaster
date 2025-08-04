@@ -106,7 +106,7 @@ EOF
 copy_artwork() {
     if [ -f "$USERDATA_PATH/PORTS-portmaster/no-artwork" ]; then
         echo "Artwork disabled."
-        rm -f "$ROM_DIR/.media/*.png"
+        find "$ROM_DIR/.media" -name '*.png' -type f -delete
         return
     fi
 
