@@ -218,11 +218,11 @@ find_shell_scripts() {
     done
 }
 
-modify_squashfs_shebang() {
+modify_squashfs_scripts() {
     squashfs_file="$1"
     tmpdir=$(mktemp -d) || return 1
 
-    echo "Modifying shebangs in $squashfs_file"
+    echo "Modifying scripts in $squashfs_file"
     if ! unsquashfs -d "$tmpdir" "$squashfs_file"; then
         echo "Failed to extract squashfs"
         rm -rf "$tmpdir"
@@ -230,11 +230,11 @@ modify_squashfs_shebang() {
     fi
 
     find_shell_scripts "$tmpdir" | update_shebangs_from_list
-    # controlfolder="/mnt/SDCARD/Emus/tg5040/PORTS.pak/PortMaster"
+    find_shell_scripts "$tmpdir" | replace_strings_in_files "/roms/ports/PortMaster" "$EMU_DIR"
 
     echo "Rebuilding squashfs file $squashfs_file"
     rm -f "$squashfs_file"
-    if !  mksquashfs "$tmpdir" "$squashfs_file" -noappend -comp xz; then
+    if ! mksquashfs "$tmpdir" "$squashfs_file" -noappend -comp xz; then
         echo "Failed to rebuild squashfs"
         rm -rf "$tmpdir"
         return 1
@@ -254,7 +254,7 @@ process_squashfs_files() {
             continue
         fi
         echo "Processing $squashfs_file"
-        if modify_squashfs_shebang "$squashfs_file"; then
+        if modify_squashfs_scripts "$squashfs_file"; then
             touch "$processed_marker"
         else
             echo "Failed to process $squashfs_file"
@@ -377,8 +377,6 @@ main() {
     python3 "$PAK_DIR/src/replace_string_in_file.py" "$EMU_DIR/control.txt" \
         TEMP_DATA_DIR "${TEMP_DATA_DIR#/}"
 
-    process_squashfs_files "$EMU_DIR/libs"
-
     minui-power-control &
 
     if echo "$ROM_NAME" | grep -qi "portmaster"; then
@@ -401,6 +399,7 @@ main() {
         find_shell_scripts "$ROM_DIR" | replace_strings_in_files "/roms/ports/PortMaster" "$EMU_DIR"
         replace_progressor_binaries "$PORTS_DIR"
         copy_artwork
+        process_squashfs_files "$EMU_DIR/libs"
     else
         echo "Starting PortMaster with port: $ROM_PATH"
         show_message "Starting ${ROM_NAME%.*}..." 120 &
