@@ -380,9 +380,9 @@ main() {
 
     cp -f "$PAK_DIR/files/control.txt" "$EMU_DIR/control.txt"
     python3 "$PAK_DIR/src/replace_string_in_file.py" "$EMU_DIR/control.txt" \
-        EMU_DIR "$EMU_DIR"
+        "\$EMU_DIR" "$EMU_DIR"
     python3 "$PAK_DIR/src/replace_string_in_file.py" "$EMU_DIR/control.txt" \
-        TEMP_DATA_DIR "${TEMP_DATA_DIR#/}"
+        "\$TEMP_DATA_DIR" "${TEMP_DATA_DIR#/}"
 
     minui-power-control &
 

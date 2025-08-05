@@ -2,8 +2,8 @@
 
 CUR_TTY=/dev/tty0
 
-controlfolder="EMU_DIR"
-directory="TEMP_DATA_DIR"
+controlfolder="$EMU_DIR"
+directory="$TEMP_DATA_DIR"
 
 PM_SCRIPTNAME="$(basename "${PM_SCRIPTNAME:-$0}")"
 PM_PORTNAME="${PM_SCRIPTNAME%.sh}"
@@ -23,5 +23,5 @@ get_controls() {
 . $controlfolder/device_info.txt
 . $controlfolder/funcs.txt
 
-GPTOKEYB2="$ESUDO env LD_PRELOAD=EMU_DIR/libinterpose.aarch64.so $controlfolder/gptokeyb2 $ESUDOKILL"
+GPTOKEYB2="$ESUDO env LD_PRELOAD=$EMU_DIR/libinterpose.aarch64.so $controlfolder/gptokeyb2 $ESUDOKILL"
 GPTOKEYB="$ESUDO $controlfolder/gptokeyb $ESUDOKILL"
