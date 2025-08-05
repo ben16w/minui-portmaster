@@ -231,7 +231,7 @@ modify_squashfs_scripts() {
     fi
 
     shell_scripts=$(find_shell_scripts "$tmpdir")
-    if [ -z "$shell_scripts" ]; then
+    if ! echo "$shell_scripts" | grep -q .; then
         echo "No shell scripts found in $squashfs_file"
         rm -rf "$tmpdir"
         return 0
