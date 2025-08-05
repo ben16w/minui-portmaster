@@ -65,6 +65,7 @@ cleanup() {
 
 clean_markers() {
     if [ -f "$PAK_DIR/files/new-install" ]; then
+        echo "Cleaning up markers."
         find "$EMU_DIR/libs" -type f -name "*.processed" -delete
         rm -f "$PAK_DIR/bin/busybox_wrappers.processed"
         rm -f "$PAK_DIR/files/new-install"

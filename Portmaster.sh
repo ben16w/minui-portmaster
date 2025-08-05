@@ -1,2 +1,2 @@
 # Portmaster.sh
-# This file is required in the Roms directory to signal when to open the PortMaster GUI.
+# This file will signal to open the PortMaster GUI when placed in the Roms directory.
