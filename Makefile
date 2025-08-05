@@ -18,7 +18,7 @@ bump-version:
 	jq '.version = "$(RELEASE_VERSION)"' pak.json > pak.json.tmp
 	mv pak.json.tmp pak.json
 
-build: PortMaster bin/minui-power-control bin/minui-presenter files/minui-presenter bin/jq bin/mksquashfs bin/unsquashfs
+build: PortMaster bin/minui-power-control bin/minui-presenter files/minui-presenter bin/jq bin/mksquashfs bin/unsquashfs PortMaster/libs/weston_pkg_0.2.squashfs
 	@echo "Build complete"
 
 PortMaster:
@@ -60,6 +60,10 @@ bin/unsquashfs:
 	curl -f -o bin/unsquashfs -sSL "https://github.com/VHSgunzo/squashfs-tools-static/releases/download/v$(SQUASHFS_VERSION)/unsquashfs-aarch64"
 	chmod +x bin/unsquashfs
 	curl -sSL -o bin/unsquashfs.LICENSE "https://github.com/VHSgunzo/squashfs-tools-static/raw/refs/heads/main/LICENSE"
+
+PortMaster/libs/weston_pkg_0.2.squashfs:
+	mkdir -p PortMaster/libs
+	curl -f -o PortMaster/libs/weston_pkg_0.2.squashfs -sSL "https://drive.google.com/uc?export=download&id=15rIggD3O3zvzl84kU4AL2zeX747rV9XW"
 
 release: build release-pak release-pakz
 	@echo "Release $(RELEASE_VERSION) complete"

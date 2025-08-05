@@ -2,3 +2,4 @@ bin
 lib
 PortMaster
 files/minui-presenter
+PortMaster/libs/weston_pkg_0.2.squashfs
