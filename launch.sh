@@ -63,6 +63,14 @@ cleanup() {
     fi
 }
 
+clean_markers() {
+    if [ -f "$PAK_DIR/files/new-install" ]; then
+        find "$EMU_DIR/libs" -type f -name "*.processed" -delete
+        rm -f "$PAK_DIR/bin/busybox_wrappers.processed"
+        rm -f "$PAK_DIR/files/new-install"
+    fi
+}
+
 show_message() (
     message="$1"
     seconds="$2"
@@ -343,15 +351,17 @@ main() {
     echo "Starting PortMaster with ROM: $ROM_PATH"
     show_message "Starting, please wait..." forever
 
+    clean_markers
+
     if [ -f "$PAK_DIR/files/bin.tar.gz" ] || [ -f "$PAK_DIR/files/lib.tar.gz" ]; then
         show_message "Unpacking files, please wait..." forever
         unpack_tar "$PAK_DIR/files/bin.tar.gz" "$PAK_DIR/bin"
         unpack_tar "$PAK_DIR/files/lib.tar.gz" "$PAK_DIR/lib"
     fi
 
-    if [ ! -f "$PAK_DIR/bin/busybox_wrappers.created" ]; then
+    if [ ! -f "$PAK_DIR/bin/busybox_wrappers.processed" ]; then
         create_busybox_wrappers
-        touch "$PAK_DIR/bin/busybox_wrappers.created"
+        touch "$PAK_DIR/bin/busybox_wrappers.processed"
     fi
 
     if [ ! -f "$EMU_DIR/config/config.json" ]; then
