@@ -224,18 +224,24 @@ modify_squashfs_scripts() {
     tmpdir=$(mktemp -d) || return 1
 
     echo "Modifying scripts in $squashfs_file"
-    if ! unsquashfs -d "$tmpdir" "$squashfs_file"; then
+    if ! unsquashfs -no-progress -d "$tmpdir" "$squashfs_file"; then
         echo "Failed to extract squashfs"
         rm -rf "$tmpdir"
         return 1
     fi
 
-    find_shell_scripts "$tmpdir" | update_shebangs_from_list
-    find_shell_scripts "$tmpdir" | replace_strings_in_files "/roms/ports/PortMaster" "$EMU_DIR"
+    shell_scripts=$(find_shell_scripts "$tmpdir")
+    if [ -z "$shell_scripts" ]; then
+        echo "No shell scripts found in $squashfs_file"
+        rm -rf "$tmpdir"
+        return 0
+    fi
+    echo "$shell_scripts" | update_shebangs_from_list
+    echo "$shell_scripts" | replace_strings_in_files "/roms/ports/PortMaster" "$EMU_DIR"
 
     echo "Rebuilding squashfs file $squashfs_file"
     rm -f "$squashfs_file"
-    if ! mksquashfs "$tmpdir" "$squashfs_file" -noappend -comp xz; then
+    if ! mksquashfs "$tmpdir" "$squashfs_file" -noappend -comp xz -no-progress; then
         echo "Failed to rebuild squashfs"
         rm -rf "$tmpdir"
         return 1
