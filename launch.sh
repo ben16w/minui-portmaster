@@ -258,7 +258,7 @@ process_squashfs_files() {
         processed_marker="${squashfs_file}.processed"
 
         if [ -f "$processed_marker" ]; then
-            if [ "$squashfs_file" -ot "$processed_marker" ]; then
+            if [ "$processed_marker" -ot "$squashfs_file" ]; then
                 echo "Skipping $squashfs_file; already processed"
                 continue
             fi
