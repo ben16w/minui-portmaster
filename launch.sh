@@ -63,15 +63,6 @@ cleanup() {
     fi
 }
 
-clean_markers() {
-    if [ -f "$PAK_DIR/files/new-install" ]; then
-        echo "Cleaning up markers."
-        find "$EMU_DIR/libs" -type f -name "*.processed" -delete
-        rm -f "$PAK_DIR/bin/busybox_wrappers.processed"
-        rm -f "$PAK_DIR/files/new-install"
-    fi
-}
-
 show_message() (
     message="$1"
     seconds="$2"
@@ -263,12 +254,16 @@ process_squashfs_files() {
     search_dir="$1"
 
     echo "Processing SquashFS files in $search_dir"
-    find "$search_dir" -type f -name "*.squashfs" | while read -r squashfs_file; do
+    find "$search_dir" -type f -name "*.squashfs" | while IFS= read -r squashfs_file; do
         processed_marker="${squashfs_file}.processed"
+
         if [ -f "$processed_marker" ]; then
-            echo "Skipping $squashfs_file, already processed"
-            continue
+            if [ "$squashfs_file" -ot "$processed_marker" ]; then
+                echo "Skipping $squashfs_file; already processed"
+                continue
+            fi
         fi
+
         echo "Processing $squashfs_file"
         if modify_squashfs_scripts "$squashfs_file"; then
             touch "$processed_marker"
@@ -351,8 +346,6 @@ main() {
 
     echo "Starting PortMaster with ROM: $ROM_PATH"
     show_message "Starting, please wait..." forever
-
-    clean_markers
 
     if [ -f "$PAK_DIR/files/bin.tar.gz" ] || [ -f "$PAK_DIR/files/lib.tar.gz" ]; then
         show_message "Unpacking files, please wait..." forever
