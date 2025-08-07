@@ -126,6 +126,8 @@ jobs:
           make bump-version
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
+          git fetch origin main
+          git checkout main
           git add pak.json
           git commit -m "Release $RELEASE_VERSION"
           git tag "$RELEASE_VERSION"
