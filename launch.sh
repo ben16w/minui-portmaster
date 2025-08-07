@@ -254,14 +254,19 @@ process_squashfs_files() {
     search_dir="$1"
 
     echo "Processing SquashFS files in $search_dir"
-    find "$search_dir" -type f -name "*.squashfs" | while read -r squashfs_file; do
+    find "$search_dir" -type f -name "*.squashfs" | while IFS= read -r squashfs_file; do
         processed_marker="${squashfs_file}.processed"
+
         if [ -f "$processed_marker" ]; then
-            echo "Skipping $squashfs_file, already processed"
-            continue
+            if [ "$squashfs_file" -ot "$processed_marker" ]; then
+                echo "Skipping $squashfs_file; already processed"
+                continue
+            fi
         fi
+
         echo "Processing $squashfs_file"
         if modify_squashfs_scripts "$squashfs_file"; then
+            sleep 2
             touch "$processed_marker"
         else
             echo "Failed to process $squashfs_file"
@@ -349,9 +354,9 @@ main() {
         unpack_tar "$PAK_DIR/files/lib.tar.gz" "$PAK_DIR/lib"
     fi
 
-    if [ ! -f "$PAK_DIR/bin/busybox_wrappers.created" ]; then
+    if [ ! -f "$PAK_DIR/bin/busybox_wrappers.processed" ]; then
         create_busybox_wrappers
-        touch "$PAK_DIR/bin/busybox_wrappers.created"
+        touch "$PAK_DIR/bin/busybox_wrappers.processed"
     fi
 
     if [ ! -f "$EMU_DIR/config/config.json" ]; then
