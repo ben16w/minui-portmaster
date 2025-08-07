@@ -258,7 +258,7 @@ process_squashfs_files() {
         processed_marker="${squashfs_file}.processed"
 
         if [ -f "$processed_marker" ]; then
-            if [ "$processed_marker" -ot "$squashfs_file" ]; then
+            if [ "$squashfs_file" -ot "$processed_marker" ]; then
                 echo "Skipping $squashfs_file; already processed"
                 continue
             fi
@@ -266,6 +266,7 @@ process_squashfs_files() {
 
         echo "Processing $squashfs_file"
         if modify_squashfs_scripts "$squashfs_file"; then
+            sleep 2
             touch "$processed_marker"
         else
             echo "Failed to process $squashfs_file"
