@@ -348,6 +348,13 @@ main() {
     echo "Starting PortMaster with ROM: $ROM_PATH"
     show_message "Starting, please wait..." forever
 
+    if [ -f "$PAK_DIR/files/weston_pkg_0.2.squashfs" ]; then
+        echo "Moving weston_pkg_0.2.squashfs to $EMU_DIR/libs"
+        mkdir -p "$EMU_DIR/libs"
+        mv -f "$PAK_DIR/files/weston_pkg_0.2.squashfs" "$EMU_DIR/libs/"
+        touch "$EMU_DIR/libs/weston_pkg_0.2.squashfs"
+    fi
+
     if [ -f "$PAK_DIR/files/bin.tar.gz" ] || [ -f "$PAK_DIR/files/lib.tar.gz" ]; then
         show_message "Unpacking files, please wait..." forever
         unpack_tar "$PAK_DIR/files/bin.tar.gz" "$PAK_DIR/bin"
