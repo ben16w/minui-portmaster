@@ -123,9 +123,11 @@ jobs:
 
       - name: Create and Push Tag
         run: |
-          make bump-version
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
+          git fetch origin main
+          git checkout main
+          make bump-version
           git add pak.json
           git commit -m "Release $RELEASE_VERSION"
           git tag "$RELEASE_VERSION"
