@@ -79,7 +79,7 @@ jobs:
             dist/${{ steps.pak-name.outputs.PAK_NAME }}.pakz
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v4.6.2
+        uses: actions/upload-artifact@v5.0.0
         with:
           name: "${{ steps.pak-name.outputs.PAK_NAME }}-releases"
           path: |
