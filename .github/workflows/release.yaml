@@ -137,7 +137,7 @@ jobs:
           RELEASE_VERSION: ${{ needs.version.outputs.version }}
 
       - name: Release
-        uses: softprops/action-gh-release@v2.3.3
+        uses: softprops/action-gh-release@v2.4.1
         with:
           files: dist/*
           generate_release_notes: true
