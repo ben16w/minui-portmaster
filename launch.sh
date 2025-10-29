@@ -452,7 +452,7 @@ main() {
         else
             set_controller_layout xbox
         fi
-        
+
         show_message "Starting ${ROM_NAME%.*}..." 120 &
         "$PAK_DIR/bin/busybox" bash "$ROM_PATH"
     fi
