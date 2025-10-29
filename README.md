@@ -100,6 +100,20 @@ Deep sleep is supported on compatible devices. Click the power button to enter d
 
 Artwork for ports will automatically be displayed in NextUI. This feature can be disabled by creating a file named `no-artwork` in the `/.userdata/<PLATFORM>/PORTS-portmaster` folder on your SD card. Artwork is currently not supported in MinUI.
 
+## Controller Layout
+
+MinUI PortMaster supports two controller button layouts: **Xbox** (default) and **Nintendo**.
+
+- **Xbox layout**: A/B/X/Y buttons follow the Xbox controller standard (A is bottom, B is right).
+- **Nintendo layout**: A/B/X/Y buttons follow the Nintendo controller standard (A is right, B is bottom).
+
+By default, the Xbox layout is used. To switch to the Nintendo layout:
+
+1. Create an empty file named `nintendo` in the `/.userdata/<PLATFORM>/PORTS-portmaster` folder on your SD card.
+2. The Nintendo layout will be applied automatically when launching any port.
+
+To switch back to the Xbox layout, simply delete the `nintendo` file. The layout is applied each time a port is launched.
+
 ## Known Issues
 
 - Some loading screens can take a long time to complete, sometimes up to 10 minutes. This is most noticeable the first time you run PortMaster or a port, as files need to be unpacked and patched. Please be patient and allow the process to complete.
