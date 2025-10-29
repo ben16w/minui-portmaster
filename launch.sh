@@ -302,6 +302,37 @@ replace_progressor_binaries() {
     done
 }
 
+set_controller_layout() {
+    layout="$1"
+    
+    case "$layout" in
+        nintendo)
+            echo "Setting controller layout to Nintendo"
+            if [ -f "$PAK_DIR/files/gamecontrollerdb_nintendo.txt" ]; then
+                cp -f "$PAK_DIR/files/gamecontrollerdb_nintendo.txt" "$EMU_DIR/gamecontrollerdb.txt"
+                echo "Nintendo controller layout applied"
+            else
+                echo "Error: gamecontrollerdb_nintendo.txt not found"
+                return 1
+            fi
+            ;;
+        xbox)
+            echo "Setting controller layout to Xbox"
+            if [ -f "$PAK_DIR/files/gamecontrollerdb_xbox.txt" ]; then
+                cp -f "$PAK_DIR/files/gamecontrollerdb_xbox.txt" "$EMU_DIR/gamecontrollerdb.txt"
+                echo "Xbox controller layout applied"
+            else
+                echo "Error: gamecontrollerdb_xbox.txt not found"
+                return 1
+            fi
+            ;;
+        *)
+            echo "Error: Invalid controller layout '$layout'. Use 'nintendo' or 'xbox'"
+            return 1
+            ;;
+    esac
+}
+
 main() {
     echo "1" >/tmp/stay_awake
     trap "cleanup" EXIT INT TERM HUP QUIT
@@ -394,6 +425,7 @@ main() {
     if echo "$ROM_NAME" | grep -qi "portmaster"; then
         echo "Starting PortMaster GUI"
         show_message "Starting PortMaster..." 10 &
+        set_controller_layout xbox
         rm -f "$EMU_DIR/.pugwash-reboot"
 
         while true; do
@@ -414,6 +446,13 @@ main() {
         process_squashfs_files "$EMU_DIR/libs"
     else
         echo "Starting PortMaster with port: $ROM_PATH"
+
+        if [ -f "$USERDATA_PATH/PORTS-portmaster/nintendo" ]; then
+            set_controller_layout nintendo
+        else
+            set_controller_layout xbox
+        fi
+
         show_message "Starting ${ROM_NAME%.*}..." 120 &
         "$PAK_DIR/bin/busybox" bash "$ROM_PATH"
     fi
