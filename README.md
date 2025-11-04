@@ -8,7 +8,7 @@
 
 </div>
 
-A MinUI and NextUI Emu Pak for PortMaster which includes everything needed and requires no additional software.
+A PortMaster Emu Pack for MinUI and NextUI that includes everything needed out of the box, no additional software required.
 
 ## Description
 
