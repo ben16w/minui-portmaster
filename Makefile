@@ -66,6 +66,7 @@ bin/bash:
 	mkdir -p bin
 	curl -f -o bin/bash -sSL "https://github.com/pobega/minui-bash/releases/download/$(MINUI_BASH_VERSION)/minui-bash-aarch64"
 	chmod +x bin/bash
+	curl -sSL -o bin/bash.LICENSE "https://github.com/pobega/minui-bash/raw/refs/heads/main/bash.LICENSE"
 
 release: build release-pak release-pakz
 	@echo "Release $(RELEASE_VERSION) complete"
