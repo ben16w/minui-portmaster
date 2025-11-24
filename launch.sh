@@ -181,7 +181,7 @@ update_file_shebang() {
     first_line=$(head -n 1 "$file")
     if [ "$first_line" = "#!/bin/bash" ]; then
         tail -n +2 "$file" > "$file.tmp"
-        echo "#!/usr/bin/env bash" > "$file.new"
+        echo "#!/mnt/SDCARD/Emus/tg5040/PORTS.pak/bin/bash" > "$file.new"
         cat "$file.tmp" >> "$file.new"
         mv "$file.new" "$file"
         chmod +x "$file"
