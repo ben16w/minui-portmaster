@@ -1,6 +1,7 @@
 PAK_NAME := $(shell jq -r .name pak.json)
 PAK_DIR := "Emus/tg5040"
 
+MINUI_BASH_VERSION := 1.0.0
 MINUI_POWER_CONTROL_VERSION := 2.0.1
 PORTMASTER_VERSION := 2025.07.14-1510
 MINUI_PRESENTER_VERSION := 0.9.0
@@ -18,7 +19,7 @@ bump-version:
 	jq '.version = "$(RELEASE_VERSION)"' pak.json > pak.json.tmp
 	mv pak.json.tmp pak.json
 
-build: PortMaster bin/minui-power-control bin/minui-presenter files/minui-presenter bin/jq bin/mksquashfs bin/unsquashfs
+build: PortMaster bin/minui-power-control bin/minui-presenter files/minui-presenter bin/jq bin/mksquashfs bin/unsquashfs bin/bash
 	@echo "Build complete"
 
 PortMaster:
@@ -60,6 +61,12 @@ bin/unsquashfs:
 	curl -f -o bin/unsquashfs -sSL "https://github.com/VHSgunzo/squashfs-tools-static/releases/download/v$(SQUASHFS_VERSION)/unsquashfs-aarch64"
 	chmod +x bin/unsquashfs
 	curl -sSL -o bin/unsquashfs.LICENSE "https://github.com/VHSgunzo/squashfs-tools-static/raw/refs/heads/main/LICENSE"
+
+bin/bash:
+	mkdir -p bin
+	curl -f -o bin/bash -sSL "https://github.com/pobega/minui-bash/releases/download/$(MINUI_BASH_VERSION)/minui-bash-aarch64"
+	chmod +x bin/bash
+	curl -sSL -o bin/bash.LICENSE "https://github.com/pobega/minui-bash/raw/refs/heads/main/bash.LICENSE"
 
 release: build release-pak release-pakz
 	@echo "Release $(RELEASE_VERSION) complete"

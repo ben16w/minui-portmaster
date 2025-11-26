@@ -454,7 +454,7 @@ main() {
         fi
 
         show_message "Starting ${ROM_NAME%.*}..." 120 &
-        "$PAK_DIR/bin/busybox" bash "$ROM_PATH"
+        "$PAK_DIR/bin/bash" "$ROM_PATH"
     fi
 }
 
