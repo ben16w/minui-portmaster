@@ -215,10 +215,11 @@ find_shell_scripts() {
     search_path="$1"
     find "$search_path" -type f -executable \
         \( -name "*.sh" -o -name "*.src" -o -name "*.txt" -o ! -name "*.*" \) \
-        | while read -r file; do
-        if head -n 1 "$file" | grep -qE '^#!.*(sh|bash)'; then
-            echo "$file"
-        fi
+        | while IFS= read -r file || [ -n "$file" ]; do
+            read -r first_line < "$file"
+            case "$first_line" in
+                '#!'*sh|'#!'*bash) echo "$file" ;;
+            esac
     done
 }
 
@@ -234,6 +235,7 @@ modify_squashfs_scripts() {
     fi
 
     shell_scripts=$(find_shell_scripts "$tmpdir")
+    echo $shell_scripts
     if ! echo "$shell_scripts" | grep -q .; then
         echo "No shell scripts found in $squashfs_file"
         rm -rf "$tmpdir"
