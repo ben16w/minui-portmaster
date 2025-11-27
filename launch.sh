@@ -328,6 +328,7 @@ main() {
     chmod +x "$PAK_DIR/bin/minui-presenter"
     chmod +x "$PAK_DIR/bin/minui-power-control"
     chmod +x "$PAK_DIR/bin/jq"
+    chmod +x "$PAK_DIR/bin/bash"
 
     allowed_platforms="tg5040"
     if ! echo "$allowed_platforms" | grep -q "$PLATFORM"; then
