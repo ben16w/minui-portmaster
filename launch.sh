@@ -198,16 +198,6 @@ update_shebangs_from_list() {
     done
 }
 
-replace_strings_in_files() {
-    old_string="$1"
-    new_string="$2"
-    while IFS= read -r file || [ -n "$file" ]; do
-        [ -z "$file" ] && continue
-        echo "Replacing '$old_string' with '$new_string' in $file"
-        python3 "$PAK_DIR/src/replace_string_in_file.py" "$file" "$old_string" "$new_string"
-    done
-}
-
 find_shell_scripts() {
     search_path="$1"
     find "$search_path" -type f -executable \
@@ -237,7 +227,7 @@ modify_squashfs_scripts() {
         return 0
     fi
     echo "$shell_scripts" | update_shebangs_from_list
-    echo "$shell_scripts" | replace_strings_in_files "/roms/ports/PortMaster" "$EMU_DIR"
+    echo "$shell_scripts" | while IFS= read -r file || [ -n "$file" ]; do [ -z "$file" ] && continue; echo "Replacing '/roms/ports/PortMaster' with '$EMU_DIR' in $file"; sed "s|/roms/ports/PortMaster|${EMU_DIR}|g" "$file" > "$file.tmp" && mv "$file.tmp" "$file"; done
 
     echo "Rebuilding squashfs file $squashfs_file"
     rm -f "$squashfs_file"
@@ -408,7 +398,7 @@ main() {
 
         show_message "Applying changes, please wait..." &
         find_shell_scripts "$ROM_DIR" | update_shebangs_from_list
-        find_shell_scripts "$ROM_DIR" | replace_strings_in_files "/roms/ports/PortMaster" "$EMU_DIR"
+        find_shell_scripts "$ROM_DIR" | while IFS= read -r file || [ -n "$file" ]; do [ -z "$file" ] && continue; echo "Replacing '/roms/ports/PortMaster' with '$EMU_DIR' in $file"; sed "s|/roms/ports/PortMaster|${EMU_DIR}|g" "$file" > "$file.tmp" && mv "$file.tmp" "$file"; done
         replace_progressor_binaries "$PORTS_DIR"
         copy_artwork
         process_squashfs_files "$EMU_DIR/libs"
