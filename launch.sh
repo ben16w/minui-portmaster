@@ -383,16 +383,13 @@ main() {
     fi
 
     unzip_pylibs "$EMU_DIR/pylibs.zip"
-    python3 "$PAK_DIR/src/replace_string_in_file.py" \
-        "$EMU_DIR/pylibs/harbourmaster/platform.py" "/mnt/SDCARD/Roms/PORTS" "$ROM_DIR"
+    sed -i "s|/mnt/SDCARD/Roms/PORTS|$ROM_DIR|g" "$EMU_DIR/pylibs/harbourmaster/platform.py"
     python3 "$PAK_DIR/src/disable_python_function.py" \
         "$EMU_DIR/pylibs/harbourmaster/platform.py" portmaster_install
 
     cp -f "$PAK_DIR/files/control.txt" "$EMU_DIR/control.txt"
-    python3 "$PAK_DIR/src/replace_string_in_file.py" "$EMU_DIR/control.txt" \
-        "\$EMU_DIR" "$EMU_DIR"
-    python3 "$PAK_DIR/src/replace_string_in_file.py" "$EMU_DIR/control.txt" \
-        "\$TEMP_DATA_DIR" "${TEMP_DATA_DIR#/}"
+    sed -i "s|\$EMU_DIR|$EMU_DIR|g" "$EMU_DIR/control.txt"
+    sed -i "s|\$TEMP_DATA_DIR|${TEMP_DATA_DIR#/}|g" "$EMU_DIR/control.txt"
 
     minui-power-control &
 
