@@ -198,6 +198,15 @@ update_shebangs_from_list() {
     done
 }
 
+update_portmaster_path_from_list() {
+    while IFS= read -r file || [ -n "$file" ]; do
+        [ -z "$file" ] && continue
+        echo "Replacing '/roms/ports/PortMaster' with '$EMU_DIR' in $file"
+        sed "s|/roms/ports/PortMaster|${EMU_DIR}|g" "$file" > "$file.tmp" && mv "$file.tmp" "$file"
+    done
+}
+
+
 find_shell_scripts() {
     search_path="$1"
     find "$search_path" -type f -executable \
@@ -227,7 +236,7 @@ modify_squashfs_scripts() {
         return 0
     fi
     echo "$shell_scripts" | update_shebangs_from_list
-    echo "$shell_scripts" | while IFS= read -r file || [ -n "$file" ]; do [ -z "$file" ] && continue; echo "Replacing '/roms/ports/PortMaster' with '$EMU_DIR' in $file"; sed "s|/roms/ports/PortMaster|${EMU_DIR}|g" "$file" > "$file.tmp" && mv "$file.tmp" "$file"; done
+    echo "$shell_scripts" | update_portmaster_path_from_list
 
     echo "Rebuilding squashfs file $squashfs_file"
     rm -f "$squashfs_file"
@@ -398,7 +407,7 @@ main() {
 
         show_message "Applying changes, please wait..." &
         find_shell_scripts "$ROM_DIR" | update_shebangs_from_list
-        find_shell_scripts "$ROM_DIR" | while IFS= read -r file || [ -n "$file" ]; do [ -z "$file" ] && continue; echo "Replacing '/roms/ports/PortMaster' with '$EMU_DIR' in $file"; sed "s|/roms/ports/PortMaster|${EMU_DIR}|g" "$file" > "$file.tmp" && mv "$file.tmp" "$file"; done
+        find_shell_scripts "$ROM_DIR" | update_portmaster_path_from_list
         replace_progressor_binaries "$PORTS_DIR"
         copy_artwork
         process_squashfs_files "$EMU_DIR/libs"
