@@ -174,36 +174,41 @@ unzip_pylibs() {
 update_file_shebang() {
     file="$1"
     echo "Updating shebang for $file"
-    if [ ! -f "$file" ]; then
-        echo "$file not found"
-        return 1
-    fi
-    first_line=$(head -n 1 "$file")
-    if [ "$first_line" = "#!/bin/bash" ]; then
-        tail -n +2 "$file" > "$file.tmp"
-        echo "#!/usr/bin/env bash" > "$file.new"
-        cat "$file.tmp" >> "$file.new"
-        mv "$file.new" "$file"
-        chmod +x "$file"
-        rm -f "$file.tmp"
-    else
-        echo "No need to update shebang for $file"
-    fi
+    sed -i '1s|.*|#!/usr/bin/env bash|' "$file"
+    chmod +x "$file"
 }
 
 update_shebangs_from_list() {
-    while IFS= read -r file || [ -n "$file" ]; do
+    filter_files_with_string "#!/bin/bash" | while IFS= read -r file || [ -n "$file" ]; do
         [ -z "$file" ] && continue
         update_file_shebang "$file"
     done
 }
 
-update_portmaster_path_from_list() {
+filter_files_with_string() {
+    string="$1"
     while IFS= read -r file || [ -n "$file" ]; do
         [ -z "$file" ] && continue
-        echo "Replacing '/roms/ports/PortMaster' with '$EMU_DIR' in $file"
-        sed "s|/roms/ports/PortMaster|${EMU_DIR}|g" "$file" > "$file.tmp" && mv "$file.tmp" "$file"
+        # -q is quiet (no output), returns true if pattern is found.
+        if grep -q "$string" "$file"; then
+            echo "$file"
+        fi
     done
+}
+
+replace_string_in_files() {
+    old_string="$1"
+    new_string="$2"
+
+    while IFS= read -r file || [ -n "$file" ]; do
+        [ -z "$file" ] && continue
+        echo "Replacing '$old_string' with '$new_string' in $file"
+        sed "s|$old_string|$new_string|g" "$file" > "$file.tmp" && mv "$file.tmp" "$file"
+    done
+}
+
+update_portmaster_path_from_list() {
+    replace_string_in_files "/roms/ports/PortMaster" "$EMU_DIR"
 }
 
 
@@ -235,8 +240,10 @@ modify_squashfs_scripts() {
         rm -rf "$tmpdir"
         return 0
     fi
+    echo "Updating shebangs for $squashfs_file..."
     echo "$shell_scripts" | update_shebangs_from_list
-    echo "$shell_scripts" | update_portmaster_path_from_list
+    echo "Updating PortMaster path for $squashfs_file..."
+    echo "$shell_scripts" | filter_files_with_string "/roms/ports/PortMaster" | update_portmaster_path_from_list
 
     echo "Rebuilding squashfs file $squashfs_file"
     rm -f "$squashfs_file"
@@ -406,8 +413,11 @@ main() {
         done
 
         show_message "Applying changes, please wait..." &
-        find_shell_scripts "$ROM_DIR" | update_shebangs_from_list
-        find_shell_scripts "$ROM_DIR" | update_portmaster_path_from_list
+        shell_scripts=$(find_shell_scripts "$ROM_DIR")
+        echo "Updating shebangs for launch scripts..."
+        echo "$shell_scripts" | update_shebangs_from_list
+        echo "Updating PortMaster path for launch scripts..."
+        echo "$shell_scripts" | filter_files_with_string "/roms/ports/PortMaster" | update_portmaster_path_from_list
         replace_progressor_binaries "$PORTS_DIR"
         copy_artwork
         process_squashfs_files "$EMU_DIR/libs"
