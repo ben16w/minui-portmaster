@@ -202,7 +202,7 @@ replace_string_in_files() {
     while IFS= read -r file || [ -n "$file" ]; do
         [ -z "$file" ] && continue
         echo "Replacing '$old_string' with '$new_string' in $file"
-        sed "s|$old_string|$new_string|g" "$file" > "$file.tmp" && mv "$file.tmp" "$file"
+        sed -i "s|$old_string|$new_string|g" "$file"
     done
 }
 
