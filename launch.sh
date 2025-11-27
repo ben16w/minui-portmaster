@@ -225,11 +225,12 @@ find_shell_scripts() {
 
 modify_squashfs_scripts() {
     squashfs_file="$1"
+    squashfs_basename=$(basename "$squashfs_file")
     tmpdir=$(mktemp -d) || return 1
 
     echo "Modifying scripts in $squashfs_file"
     if ! unsquashfs -no-progress -d "$tmpdir" "$squashfs_file"; then
-        echo "Failed to extract squashfs"
+        echo "Failed to extract $squashfs_basename"
         rm -rf "$tmpdir"
         return 1
     fi
@@ -237,19 +238,19 @@ modify_squashfs_scripts() {
     shell_scripts=$(find_shell_scripts "$tmpdir")
     echo $shell_scripts
     if ! echo "$shell_scripts" | grep -q .; then
-        echo "No shell scripts found in $squashfs_file"
+        echo "No shell scripts found in $squashfs_basename"
         rm -rf "$tmpdir"
         return 0
     fi
-    echo "Updating shebangs for $squashfs_file..."
+    echo "Updating shebangs for $squashfs_basename..."
     echo "$shell_scripts" | update_shebangs_from_list
-    echo "Updating PortMaster path for $squashfs_file..."
+    echo "Updating PortMaster path for $squashfs_basename..."
     echo "$shell_scripts" | filter_files_with_string "/roms/ports/PortMaster" | update_portmaster_path_from_list
 
     echo "Rebuilding squashfs file $squashfs_file"
     rm -f "$squashfs_file"
     if ! mksquashfs "$tmpdir" "$squashfs_file" -noappend -comp xz -no-progress; then
-        echo "Failed to rebuild squashfs"
+        echo "Failed to rebuild $squashfs_basename"
         rm -rf "$tmpdir"
         return 1
     fi
