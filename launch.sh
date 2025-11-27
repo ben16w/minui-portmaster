@@ -175,7 +175,6 @@ update_file_shebang() {
     file="$1"
     echo "Updating shebang for $file"
     sed -i '1s|.*|#!/usr/bin/env bash|' "$file"
-    chmod +x "$file"
 }
 
 update_shebangs_from_list() {
