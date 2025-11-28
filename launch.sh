@@ -413,9 +413,9 @@ main() {
 
         show_message "Applying changes, please wait..." &
         shell_scripts=$(find_shell_scripts "$ROM_DIR")
-        echo "Updating shebangs for launch scripts..."
+        echo "Updating shebangs for game scripts..."
         echo "$shell_scripts" | update_shebangs_from_list
-        echo "Updating PortMaster path for launch scripts..."
+        echo "Updating PortMaster path for game scripts..."
         echo "$shell_scripts" | filter_files_with_string "/roms/ports/PortMaster" | update_portmaster_path_from_list
         replace_progressor_binaries "$PORTS_DIR"
         copy_artwork
