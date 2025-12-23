@@ -1,11 +1,13 @@
 PAK_NAME := $(shell jq -r .name pak.json)
 PAK_DIR := "Emus/tg5040"
 
+MINUI_BASH_VERSION := 1.0.0
 MINUI_POWER_CONTROL_VERSION := 2.0.1
 PORTMASTER_VERSION := 2025.07.14-1510
 MINUI_PRESENTER_VERSION := 0.9.0
 JQ_VERSION := 1.7.1
 SQUASHFS_VERSION := 4.6.1
+7ZIP_VERSION := 2501
 
 clean:
 	find bin -type f ! -name '.gitkeep' -delete
@@ -18,7 +20,7 @@ bump-version:
 	jq '.version = "$(RELEASE_VERSION)"' pak.json > pak.json.tmp
 	mv pak.json.tmp pak.json
 
-build: PortMaster bin/minui-power-control bin/minui-presenter files/minui-presenter bin/jq bin/mksquashfs bin/unsquashfs files/weston_pkg_0.2.squashfs
+build: PortMaster bin/minui-power-control bin/minui-presenter files/minui-presenter bin/jq bin/mksquashfs bin/unsquashfs bin/bash bin/7zzs.aarch64 files/weston_pkg_0.2.squashfs
 	@echo "Build complete"
 
 PortMaster:
@@ -64,6 +66,21 @@ bin/unsquashfs:
 files/weston_pkg_0.2.squashfs:
 	mkdir -p PortMaster/libs
 	curl -f -o files/weston_pkg_0.2.squashfs -sSL "https://drive.google.com/uc?export=download&id=15rIggD3O3zvzl84kU4AL2zeX747rV9XW"
+
+bin/bash:
+	mkdir -p bin
+	curl -f -o bin/bash -sSL "https://github.com/pobega/minui-bash/releases/download/$(MINUI_BASH_VERSION)/minui-bash-aarch64"
+	chmod +x bin/bash
+	curl -sSL -o bin/bash.LICENSE "https://github.com/pobega/minui-bash/raw/refs/heads/main/bash.LICENSE"
+
+bin/7zzs.aarch64:
+	mkdir -p bin
+	curl -f -o /tmp/7z$(7ZIP_VERSION)-linux-arm64.tar.xz -sSL "https://7-zip.org/a/7z$(7ZIP_VERSION)-linux-arm64.tar.xz"
+	tar -C /tmp -xf /tmp/7z$(7ZIP_VERSION)-linux-arm64.tar.xz
+	mv /tmp/7zzs bin/7zzs.aarch64
+	chmod +x bin/7zzs.aarch64
+	rm -f /tmp/7z$(7ZIP_VERSION)-linux-arm64.tar.xz
+	curl -sSL -o bin/7zzs.aarch64.LICENSE "https://www.7-zip.org/license.txt"
 
 release: build release-pak release-pakz
 	@echo "Release $(RELEASE_VERSION) complete"

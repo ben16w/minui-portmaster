@@ -174,75 +174,83 @@ unzip_pylibs() {
 update_file_shebang() {
     file="$1"
     echo "Updating shebang for $file"
-    if [ ! -f "$file" ]; then
-        echo "$file not found"
-        return 1
-    fi
-    first_line=$(head -n 1 "$file")
-    if [ "$first_line" = "#!/bin/bash" ]; then
-        tail -n +2 "$file" > "$file.tmp"
-        echo "#!/usr/bin/env bash" > "$file.new"
-        cat "$file.tmp" >> "$file.new"
-        mv "$file.new" "$file"
-        chmod +x "$file"
-        rm -f "$file.tmp"
-    else
-        echo "No need to update shebang for $file"
-    fi
+    sed -i '1s|.*|#!/usr/bin/env bash|' "$file"
 }
 
 update_shebangs_from_list() {
-    while IFS= read -r file || [ -n "$file" ]; do
+    filter_files_with_string "#!/bin/bash" | while IFS= read -r file || [ -n "$file" ]; do
         [ -z "$file" ] && continue
         update_file_shebang "$file"
     done
 }
 
-replace_strings_in_files() {
-    old_string="$1"
-    new_string="$2"
+filter_files_with_string() {
+    string="$1"
     while IFS= read -r file || [ -n "$file" ]; do
         [ -z "$file" ] && continue
-        echo "Replacing '$old_string' with '$new_string' in $file"
-        python3 "$PAK_DIR/src/replace_string_in_file.py" "$file" "$old_string" "$new_string"
-    done
-}
-
-find_shell_scripts() {
-    search_path="$1"
-    find "$search_path" -type f -executable \
-        \( -name "*.sh" -o -name "*.src" -o -name "*.txt" -o ! -name "*.*" \) \
-        | while read -r file; do
-        if head -n 1 "$file" | grep -qE '^#!.*(sh|bash)'; then
+        # -q is quiet (no output), returns true if pattern is found.
+        if grep -q "$string" "$file"; then
             echo "$file"
         fi
     done
 }
 
+replace_string_in_files() {
+    old_string="$1"
+    new_string="$2"
+
+    while IFS= read -r file || [ -n "$file" ]; do
+        [ -z "$file" ] && continue
+        echo "Replacing '$old_string' with '$new_string' in $file"
+        sed -i "s|$old_string|$new_string|g" "$file"
+    done
+}
+
+update_portmaster_path_from_list() {
+    replace_string_in_files "/roms/ports/PortMaster" "$EMU_DIR"
+}
+
+
+find_shell_scripts() {
+    search_path="$1"
+    find "$search_path" -type f -executable \
+        \( -name "*.sh" -o -name "*.src" -o -name "*.txt" -o ! -name "*.*" \) \
+        | while IFS= read -r file || [ -n "$file" ]; do
+            read -r first_line < "$file"
+            case "$first_line" in
+                '#!'*sh|'#!'*bash) echo "$file" ;;
+            esac
+    done
+}
+
 modify_squashfs_scripts() {
     squashfs_file="$1"
+    squashfs_basename=$(basename "$squashfs_file")
     tmpdir=$(mktemp -d) || return 1
 
     echo "Modifying scripts in $squashfs_file"
     if ! unsquashfs -no-progress -d "$tmpdir" "$squashfs_file"; then
-        echo "Failed to extract squashfs"
+        echo "Failed to extract $squashfs_basename"
         rm -rf "$tmpdir"
         return 1
     fi
 
     shell_scripts=$(find_shell_scripts "$tmpdir")
+    echo $shell_scripts
     if ! echo "$shell_scripts" | grep -q .; then
-        echo "No shell scripts found in $squashfs_file"
+        echo "No shell scripts found in $squashfs_basename"
         rm -rf "$tmpdir"
         return 0
     fi
+    echo "Updating shebangs for $squashfs_basename..."
     echo "$shell_scripts" | update_shebangs_from_list
-    echo "$shell_scripts" | replace_strings_in_files "/roms/ports/PortMaster" "$EMU_DIR"
+    echo "Updating PortMaster path for $squashfs_basename..."
+    echo "$shell_scripts" | filter_files_with_string "/roms/ports/PortMaster" | update_portmaster_path_from_list
 
     echo "Rebuilding squashfs file $squashfs_file"
     rm -f "$squashfs_file"
     if ! mksquashfs "$tmpdir" "$squashfs_file" -noappend -comp xz -no-progress; then
-        echo "Failed to rebuild squashfs"
+        echo "Failed to rebuild $squashfs_basename"
         rm -rf "$tmpdir"
         return 1
     fi
@@ -302,6 +310,37 @@ replace_progressor_binaries() {
     done
 }
 
+set_controller_layout() {
+    layout="$1"
+    
+    case "$layout" in
+        nintendo)
+            echo "Setting controller layout to Nintendo"
+            if [ -f "$PAK_DIR/files/gamecontrollerdb_nintendo.txt" ]; then
+                cp -f "$PAK_DIR/files/gamecontrollerdb_nintendo.txt" "$EMU_DIR/gamecontrollerdb.txt"
+                echo "Nintendo controller layout applied"
+            else
+                echo "Error: gamecontrollerdb_nintendo.txt not found"
+                return 1
+            fi
+            ;;
+        xbox)
+            echo "Setting controller layout to Xbox"
+            if [ -f "$PAK_DIR/files/gamecontrollerdb_xbox.txt" ]; then
+                cp -f "$PAK_DIR/files/gamecontrollerdb_xbox.txt" "$EMU_DIR/gamecontrollerdb.txt"
+                echo "Xbox controller layout applied"
+            else
+                echo "Error: gamecontrollerdb_xbox.txt not found"
+                return 1
+            fi
+            ;;
+        *)
+            echo "Error: Invalid controller layout '$layout'. Use 'nintendo' or 'xbox'"
+            return 1
+            ;;
+    esac
+}
+
 main() {
     echo "1" >/tmp/stay_awake
     trap "cleanup" EXIT INT TERM HUP QUIT
@@ -328,6 +367,7 @@ main() {
     chmod +x "$PAK_DIR/bin/minui-presenter"
     chmod +x "$PAK_DIR/bin/minui-power-control"
     chmod +x "$PAK_DIR/bin/jq"
+    chmod +x "$PAK_DIR/bin/bash"
 
     allowed_platforms="tg5040"
     if ! echo "$allowed_platforms" | grep -q "$PLATFORM"; then
@@ -385,22 +425,20 @@ main() {
     fi
 
     unzip_pylibs "$EMU_DIR/pylibs.zip"
-    python3 "$PAK_DIR/src/replace_string_in_file.py" \
-        "$EMU_DIR/pylibs/harbourmaster/platform.py" "/mnt/SDCARD/Roms/PORTS" "$ROM_DIR"
+    sed -i "s|/mnt/SDCARD/Roms/PORTS|$ROM_DIR|g" "$EMU_DIR/pylibs/harbourmaster/platform.py"
     python3 "$PAK_DIR/src/disable_python_function.py" \
         "$EMU_DIR/pylibs/harbourmaster/platform.py" portmaster_install
 
     cp -f "$PAK_DIR/files/control.txt" "$EMU_DIR/control.txt"
-    python3 "$PAK_DIR/src/replace_string_in_file.py" "$EMU_DIR/control.txt" \
-        "\$EMU_DIR" "$EMU_DIR"
-    python3 "$PAK_DIR/src/replace_string_in_file.py" "$EMU_DIR/control.txt" \
-        "\$TEMP_DATA_DIR" "${TEMP_DATA_DIR#/}"
+    sed -i "s|\$EMU_DIR|$EMU_DIR|g" "$EMU_DIR/control.txt"
+    sed -i "s|\$TEMP_DATA_DIR|${TEMP_DATA_DIR#/}|g" "$EMU_DIR/control.txt"
 
     minui-power-control &
 
     if echo "$ROM_NAME" | grep -qi "portmaster"; then
         echo "Starting PortMaster GUI"
         show_message "Starting PortMaster..." 10 &
+        set_controller_layout xbox
         rm -f "$EMU_DIR/.pugwash-reboot"
 
         while true; do
@@ -414,15 +452,25 @@ main() {
         done
 
         show_message "Applying changes, please wait..." &
-        find_shell_scripts "$ROM_DIR" | update_shebangs_from_list
-        find_shell_scripts "$ROM_DIR" | replace_strings_in_files "/roms/ports/PortMaster" "$EMU_DIR"
+        shell_scripts=$(find_shell_scripts "$ROM_DIR")
+        echo "Updating shebangs for game scripts..."
+        echo "$shell_scripts" | update_shebangs_from_list
+        echo "Updating PortMaster path for game scripts..."
+        echo "$shell_scripts" | filter_files_with_string "/roms/ports/PortMaster" | update_portmaster_path_from_list
         replace_progressor_binaries "$PORTS_DIR"
         copy_artwork
         process_squashfs_files "$EMU_DIR/libs"
     else
         echo "Starting PortMaster with port: $ROM_PATH"
+
+        if [ -f "$USERDATA_PATH/PORTS-portmaster/nintendo" ]; then
+            set_controller_layout nintendo
+        else
+            set_controller_layout xbox
+        fi
+
         show_message "Starting ${ROM_NAME%.*}..." 120 &
-        "$PAK_DIR/bin/busybox" bash "$ROM_PATH"
+        "$PAK_DIR/bin/bash" "$ROM_PATH"
     fi
 }
 
