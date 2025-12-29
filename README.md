@@ -123,7 +123,7 @@ To switch back to the Xbox layout, simply delete the `nintendo` file. The layout
 
 - Log files are stored in `/.userdata/tg5040/logs/PORTS.txt` for debugging.
 - If you encounter problems or bugs, please [open an issue](https://github.com/ben16w/minui-portmaster/issues/new) in this GitHub repository with details and a copy of the log file.
-- For general support or questions you can join the [NextUI Discord](https://discord.gg/HKd7wqZk3h) and post in the **Standalone PortMaster** channel.
+- For general support or questions you can join the [NextUI Discord](https://discord.gg/HKd7wqZk3h) and go to the **Standalone PortMaster** channel.
 
 ## Thanks
 
