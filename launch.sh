@@ -140,6 +140,12 @@ copy_artwork() {
     done
 }
 
+copy_game_scripts() {
+    echo "Copying game start scripts from $PORTS_DIR to $ROM_DIR"
+    cp -f "$PORTS_DIR"/*.sh "$ROM_DIR/" 2>/dev/null || true
+    chmod +x "$ROM_DIR"/*.sh 2>/dev/null || true
+}
+
 unpack_tar() {
     tar_file="$1"
     dest_dir="$2"
@@ -452,6 +458,7 @@ main() {
         echo "$shell_scripts" | filter_files_with_string "/roms/ports/PortMaster" | update_portmaster_path_from_list
         replace_progressor_binaries "$PORTS_DIR"
         copy_artwork
+        copy_game_scripts
         process_squashfs_files "$EMU_DIR/libs"
     else
         echo "Starting PortMaster with port: $ROM_PATH"
