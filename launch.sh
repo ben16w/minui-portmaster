@@ -356,17 +356,17 @@ main() {
     fi
 
     if ! command -v minui-presenter >/dev/null 2>&1; then
-        show_message "Minui-presenter not found." 2
+        show_message "Minui-presenter not found." 3
         exit 1
     fi
 
     if ! command -v minui-power-control >/dev/null 2>&1; then
-        show_message "Minui-power-control not found." 2
+        show_message "Minui-power-control not found." 3
         exit 1
     fi
 
     if ! command -v jq >/dev/null 2>&1; then
-        show_message "Jq not found." 2
+        show_message "Jq not found." 3
         exit 1
     fi
 
@@ -470,7 +470,7 @@ main() {
             set_controller_layout xbox
         fi
 
-        show_message "Starting ${ROM_NAME%.*}..." 120 &
+        show_message "Starting ${ROM_NAME%.*}..." 3
         "$PAK_DIR/bin/bash" "$ROM_PATH"
     fi
 }
