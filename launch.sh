@@ -456,7 +456,8 @@ main() {
     else
         echo "Starting PortMaster with port: $ROM_PATH"
 
-        if [ -f "$USERDATA_PATH/PORTS-portmaster/nintendo" ]; then
+        nintendo_file=$(find "$USERDATA_PATH/PORTS-portmaster" -maxdepth 1 -iname "nintendo*" -type f)
+        if [ -n "$nintendo_file" ]; then
             set_controller_layout nintendo
         else
             set_controller_layout xbox
