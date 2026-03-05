@@ -140,6 +140,12 @@ copy_artwork() {
     done
 }
 
+copy_game_scripts() {
+    echo "Copying game start scripts from $PORTS_DIR to $ROM_DIR"
+    cp -f "$PORTS_DIR"/*.sh "$ROM_DIR/" 2>/dev/null || true
+    chmod +x "$ROM_DIR"/*.sh 2>/dev/null || true
+}
+
 unpack_tar() {
     tar_file="$1"
     dest_dir="$2"
@@ -214,7 +220,7 @@ update_portmaster_path_from_list() {
 find_shell_scripts() {
     search_path="$1"
     find "$search_path" -type f -executable \
-        \( -name "*.sh" -o -name "*.src" -o -name "*.txt" -o ! -name "*.*" \) \
+        \( -name "*.sh" -o -name "*.bash" -o -name "*.src" -o -name "*.txt" -o ! -name "*.*" \) \
         | while IFS= read -r file || [ -n "$file" ]; do
             read -r first_line < "$file"
             case "$first_line" in
@@ -350,17 +356,17 @@ main() {
     fi
 
     if ! command -v minui-presenter >/dev/null 2>&1; then
-        show_message "Minui-presenter not found." 2
+        show_message "Minui-presenter not found." 3
         exit 1
     fi
 
     if ! command -v minui-power-control >/dev/null 2>&1; then
-        show_message "Minui-power-control not found." 2
+        show_message "Minui-power-control not found." 3
         exit 1
     fi
 
     if ! command -v jq >/dev/null 2>&1; then
-        show_message "Jq not found." 2
+        show_message "Jq not found." 3
         exit 1
     fi
 
@@ -459,17 +465,19 @@ main() {
         echo "$shell_scripts" | filter_files_with_string "/roms/ports/PortMaster" | update_portmaster_path_from_list
         replace_progressor_binaries "$PORTS_DIR"
         copy_artwork
+        copy_game_scripts
         process_squashfs_files "$EMU_DIR/libs"
     else
         echo "Starting PortMaster with port: $ROM_PATH"
 
-        if [ -f "$USERDATA_PATH/PORTS-portmaster/nintendo" ]; then
+        nintendo_file=$(find "$USERDATA_PATH/PORTS-portmaster" -maxdepth 1 -iname "nintendo*" -type f)
+        if [ -n "$nintendo_file" ]; then
             set_controller_layout nintendo
         else
             set_controller_layout xbox
         fi
 
-        show_message "Starting ${ROM_NAME%.*}..." 120 &
+        show_message "Starting ${ROM_NAME%.*}..." 3
         "$PAK_DIR/bin/bash" "$ROM_PATH"
     fi
 }
