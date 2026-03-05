@@ -220,7 +220,7 @@ update_portmaster_path_from_list() {
 find_shell_scripts() {
     search_path="$1"
     find "$search_path" -type f -executable \
-        \( -name "*.sh" -o -name "*.src" -o -name "*.txt" -o ! -name "*.*" \) \
+        \( -name "*.sh" -o -name "*.bash" -o -name "*.src" -o -name "*.txt" -o ! -name "*.*" \) \
         | while IFS= read -r file || [ -n "$file" ]; do
             read -r first_line < "$file"
             case "$first_line" in
