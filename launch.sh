@@ -432,6 +432,8 @@ main() {
 
     unzip_pylibs "$EMU_DIR/pylibs.zip"
     sed -i "s|/mnt/SDCARD/Roms/PORTS|$ROM_DIR|g" "$EMU_DIR/pylibs/harbourmaster/platform.py"
+    sed -i 's/if not os\.path\.samefile(port_script, target_file):/if not target_file.exists() or not os.path.samefile(port_script, target_file):/' \
+        "$EMU_DIR/pylibs/harbourmaster/platform.py"
     python3 "$PAK_DIR/src/disable_python_function.py" \
         "$EMU_DIR/pylibs/harbourmaster/platform.py" portmaster_install
 
@@ -458,17 +460,31 @@ main() {
         done
 
         show_message "Applying changes, please wait..." &
-        shell_scripts=$(find_shell_scripts "$ROM_DIR")
-        echo "Updating shebangs for game scripts..."
-        echo "$shell_scripts" | update_shebangs_from_list
-        echo "Updating PortMaster path for game scripts..."
-        echo "$shell_scripts" | filter_files_with_string "/roms/ports/PortMaster" | update_portmaster_path_from_list
         replace_progressor_binaries "$PORTS_DIR"
         copy_artwork
         copy_game_scripts
         process_squashfs_files "$EMU_DIR/libs"
     else
         echo "Starting PortMaster with port: $ROM_PATH"
+
+        directory="${TEMP_DATA_DIR#/}"
+        gamedir_line=$(grep '^GAMEDIR=' "$ROM_PATH")
+        eval "$gamedir_line"
+        echo "Game dir is: $GAMEDIR"
+
+        if [ -n "$GAMEDIR" ]; then
+            shell_scripts=$(find_shell_scripts "$GAMEDIR")
+            echo "Updating shebangs for game scripts..."
+            echo "$shell_scripts" | update_shebangs_from_list
+            echo "Updating PortMaster path for game scripts..."
+            echo "$shell_scripts" | filter_files_with_string "/roms/ports/PortMaster" | update_portmaster_path_from_list
+        else
+            # If we can't find the GAMEDIR to patch let's not attempt to
+            # run it, since running an unpatched Port will power down NextUI.
+            echo "No GAMEDIR found in $ROM_PATH, not executing game."
+            show_message "Patch failed, exiting..." 3
+            exit 1
+        fi
 
         nintendo_file=$(find "$USERDATA_PATH/PORTS-portmaster" -maxdepth 1 -iname "nintendo*" -type f)
         if [ -n "$nintendo_file" ]; then
