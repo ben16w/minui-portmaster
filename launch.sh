@@ -425,6 +425,8 @@ main() {
 
     unzip_pylibs "$EMU_DIR/pylibs.zip"
     sed -i "s|/mnt/SDCARD/Roms/PORTS|$ROM_DIR|g" "$EMU_DIR/pylibs/harbourmaster/platform.py"
+    sed -i 's/if not os\.path\.samefile(port_script, target_file):/if not target_file.exists() or not os.path.samefile(port_script, target_file):/' \
+        "$EMU_DIR/pylibs/harbourmaster/platform.py"
     python3 "$PAK_DIR/src/disable_python_function.py" \
         "$EMU_DIR/pylibs/harbourmaster/platform.py" portmaster_install
 
