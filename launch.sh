@@ -461,6 +461,7 @@ main() {
         echo "Starting PortMaster with port: $ROM_PATH"
 
         directory="${TEMP_DATA_DIR#/}"
+        PORTDIR="/$directory/ports"
         gamedir_line=$(grep '^GAMEDIR=' "$ROM_PATH")
         eval "$gamedir_line"
         echo "Game dir is: $GAMEDIR"
