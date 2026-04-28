@@ -467,7 +467,16 @@ main() {
     else
         echo "Starting PortMaster with port: $ROM_PATH"
 
+        # Patch the shell script before executing the game
+        echo "Updating shebang for $ROM_PATH..."
+        update_file_shebang "$ROM_PATH"
+        echo "Updating PortMaster path for $ROM_PATH..."
+        if grep -q "/roms/ports/PortMaster" "$ROM_PATH"; then
+            echo "$ROM_PATH" | update_portmaster_path_from_list
+        fi
+
         directory="${TEMP_DATA_DIR#/}"
+        PORTDIR="/$directory/ports"
         gamedir_line=$(grep '^GAMEDIR=' "$ROM_PATH")
         eval "$gamedir_line"
         echo "Game dir is: $GAMEDIR"
