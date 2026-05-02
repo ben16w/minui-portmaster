@@ -184,7 +184,7 @@ update_file_shebang() {
 }
 
 update_shebangs_from_list() {
-    filter_files_with_string "#!/bin/bash" | while IFS= read -r file || [ -n "$file" ]; do
+    while IFS= read -r file || [ -n "$file" ]; do
         [ -z "$file" ] && continue
         update_file_shebang "$file"
     done
@@ -248,7 +248,7 @@ modify_squashfs_scripts() {
         return 0
     fi
     echo "Updating shebangs for $squashfs_basename..."
-    echo "$shell_scripts" | update_shebangs_from_list
+    echo "$shell_scripts" | filter_files_with_string "#!/bin/bash" | update_shebangs_from_list
     echo "Updating PortMaster path for $squashfs_basename..."
     echo "$shell_scripts" | filter_files_with_string "/roms/ports/PortMaster" | update_portmaster_path_from_list
 
@@ -484,7 +484,7 @@ run_port() {
     if [ -n "$GAMEDIR" ]; then
         shell_scripts=$(find_shell_scripts "$GAMEDIR")
         echo "Updating shebangs for game scripts..."
-        echo "$shell_scripts" | update_shebangs_from_list
+        echo "$shell_scripts" | filter_files_with_string "#!/bin/bash" | update_shebangs_from_list
         echo "Updating PortMaster path for game scripts..."
         echo "$shell_scripts" | filter_files_with_string "/roms/ports/PortMaster" | update_portmaster_path_from_list
     else
