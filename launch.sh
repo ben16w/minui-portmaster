@@ -476,6 +476,9 @@ run_port() {
 
     directory="${TEMP_DATA_DIR#/}"
     PORTDIR="/$directory/ports"
+    # Ports declare GAMEDIR=... at the top of their script. eval is the
+    # simplest way to honor whatever quoting/expansion the port author
+    # used; the input is a trusted port script we are about to run.
     gamedir_line=$(grep -iE '^[[:space:]]*(export[[:space:]]+)?GAMEDIR=' "$ROM_PATH")
     eval "$gamedir_line"
     GAMEDIR="${GAMEDIR:-$gamedir}"
