@@ -426,6 +426,17 @@ setup_ports_mount() {
 
 patch_pylibs() {
     unzip_pylibs "$EMU_DIR/pylibs.zip"
+    # Three patches against upstream platform.py. If PortMaster's
+    # platform.py changes shape on a version bump, expect to revisit
+    # each one of these:
+    #   1. Rewrite PortMaster's hardcoded /mnt/SDCARD/Roms/PORTS to the
+    #      ROM_DIR we actually use in NextUI.
+    #   2. Guard os.path.samefile() against a missing target_file, which
+    #      otherwise crashes on a first-time port install (91a4f98).
+    #   3. Stub out portmaster_install() — a per-platform first_run() hook
+    #      that copies a platform-default control.txt (and friends) into
+    #      PortMaster/. We install our own patched control.txt below and
+    #      don't want it clobbered.
     sed -i "s|/mnt/SDCARD/Roms/PORTS|$ROM_DIR|g" "$EMU_DIR/pylibs/harbourmaster/platform.py"
     sed -i 's/if not os\.path\.samefile(port_script, target_file):/if not target_file.exists() or not os.path.samefile(port_script, target_file):/' \
         "$EMU_DIR/pylibs/harbourmaster/platform.py"
