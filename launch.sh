@@ -318,33 +318,24 @@ replace_progressor_binaries() {
 
 set_controller_layout() {
     layout="$1"
-    
+
     case "$layout" in
-        nintendo)
-            echo "Setting controller layout to Nintendo"
-            if [ -f "$PAK_DIR/files/gamecontrollerdb_nintendo.txt" ]; then
-                cp -f "$PAK_DIR/files/gamecontrollerdb_nintendo.txt" "$EMU_DIR/gamecontrollerdb.txt"
-                echo "Nintendo controller layout applied"
-            else
-                echo "Error: gamecontrollerdb_nintendo.txt not found"
-                return 1
-            fi
-            ;;
-        xbox)
-            echo "Setting controller layout to Xbox"
-            if [ -f "$PAK_DIR/files/gamecontrollerdb_xbox.txt" ]; then
-                cp -f "$PAK_DIR/files/gamecontrollerdb_xbox.txt" "$EMU_DIR/gamecontrollerdb.txt"
-                echo "Xbox controller layout applied"
-            else
-                echo "Error: gamecontrollerdb_xbox.txt not found"
-                return 1
-            fi
-            ;;
+        nintendo|xbox) ;;
         *)
             echo "Error: Invalid controller layout '$layout'. Use 'nintendo' or 'xbox'"
             return 1
             ;;
     esac
+
+    src="$PAK_DIR/files/gamecontrollerdb_$layout.txt"
+    if [ ! -f "$src" ]; then
+        echo "Error: $(basename "$src") not found"
+        return 1
+    fi
+
+    echo "Setting controller layout to $layout"
+    cp -f "$src" "$EMU_DIR/gamecontrollerdb.txt"
+    echo "$layout controller layout applied"
 }
 
 preflight_checks() {
