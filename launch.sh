@@ -476,7 +476,7 @@ run_port() {
 
     directory="${TEMP_DATA_DIR#/}"
     PORTDIR="/$directory/ports"
-    gamedir_line=$(grep -iE '^(export[[:space:]]+)?GAMEDIR=' "$ROM_PATH")
+    gamedir_line=$(grep -iE '^[[:space:]]*(export[[:space:]]+)?GAMEDIR=' "$ROM_PATH")
     eval "$gamedir_line"
     GAMEDIR="${GAMEDIR:-$gamedir}"
     echo "Game dir is: $GAMEDIR"
