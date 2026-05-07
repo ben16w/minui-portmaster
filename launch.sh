@@ -347,10 +347,7 @@ set_controller_layout() {
     esac
 }
 
-main() {
-    echo "1" >/tmp/stay_awake
-    trap "cleanup" EXIT INT TERM HUP QUIT
-
+preflight_checks() {
     if [ "$PLATFORM" = "tg3040" ] && [ -z "$DEVICE" ]; then
         export PLATFORM="tg5040"
     fi
@@ -380,7 +377,9 @@ main() {
         echo "$PLATFORM is not a supported platform."
         exit 1
     fi
+}
 
+save_cpu_settings() {
     cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor \
         >"$USERDATA_PATH/PORTS-portmaster/cpu_governor.txt"
     cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq \
@@ -390,10 +389,9 @@ main() {
     echo ondemand >/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
     echo 1608000 >/sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq
     echo 1800000 >/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
+}
 
-    echo "Starting PortMaster with ROM: $ROM_PATH"
-    show_message "Starting, please wait..." forever
-
+bootstrap_files() {
     if [ -f "$PAK_DIR/files/bin.tar.gz" ] || [ -f "$PAK_DIR/files/lib.tar.gz" ]; then
         show_message "Unpacking files, please wait..." forever
         unpack_tar "$PAK_DIR/files/bin.tar.gz" "$PAK_DIR/bin"
@@ -410,7 +408,9 @@ main() {
         mkdir -p "$EMU_DIR/config"
         cp -f "$PAK_DIR/files/config.json" "$EMU_DIR/config/config.json"
     fi
+}
 
+setup_ports_mount() {
     mkdir -p "$ROM_DIR/.ports"
     if ! mount | grep -q "on $TEMP_DATA_DIR/ports type"; then
         echo "Mounting $ROM_DIR/.ports to $TEMP_DATA_DIR/ports"
@@ -422,81 +422,109 @@ main() {
     else
         echo "Mount point $TEMP_DATA_DIR/ports already exists, skipping mount."
     fi
+}
 
+patch_pylibs() {
     unzip_pylibs "$EMU_DIR/pylibs.zip"
     sed -i "s|/mnt/SDCARD/Roms/PORTS|$ROM_DIR|g" "$EMU_DIR/pylibs/harbourmaster/platform.py"
     sed -i 's/if not os\.path\.samefile(port_script, target_file):/if not target_file.exists() or not os.path.samefile(port_script, target_file):/' \
         "$EMU_DIR/pylibs/harbourmaster/platform.py"
     python3 "$PAK_DIR/src/disable_python_function.py" \
         "$EMU_DIR/pylibs/harbourmaster/platform.py" portmaster_install
+}
 
+install_control_txt() {
     cp -f "$PAK_DIR/files/control.txt" "$EMU_DIR/control.txt"
     sed -i "s|\$EMU_DIR|$EMU_DIR|g" "$EMU_DIR/control.txt"
     sed -i "s|\$TEMP_DATA_DIR|${TEMP_DATA_DIR#/}|g" "$EMU_DIR/control.txt"
+}
+
+run_portmaster_gui() {
+    echo "Starting PortMaster GUI"
+    show_message "Starting PortMaster..." 10 &
+    set_controller_layout xbox
+    rm -f "$EMU_DIR/.pugwash-reboot"
+
+    while true; do
+        pugwash --debug
+
+        if [ ! -f "$EMU_DIR/.pugwash-reboot" ]; then
+            break;
+        fi
+
+        rm -f "$EMU_DIR/.pugwash-reboot"
+    done
+
+    show_message "Applying changes, please wait..." &
+    replace_progressor_binaries "$PORTS_DIR"
+    copy_artwork
+    copy_game_scripts
+    process_squashfs_files "$EMU_DIR/libs"
+}
+
+run_port() {
+    echo "Starting PortMaster with port: $ROM_PATH"
+
+    # Patch the shell script before executing the game
+    echo "Updating shebang for $ROM_PATH..."
+    update_file_shebang "$ROM_PATH"
+    echo "Updating PortMaster path for $ROM_PATH..."
+    if grep -q "/roms/ports/PortMaster" "$ROM_PATH"; then
+        echo "$ROM_PATH" | update_portmaster_path_from_list
+    fi
+
+    directory="${TEMP_DATA_DIR#/}"
+    PORTDIR="/$directory/ports"
+    gamedir_line=$(grep '^GAMEDIR=' "$ROM_PATH")
+    eval "$gamedir_line"
+    echo "Game dir is: $GAMEDIR"
+
+    if [ -n "$GAMEDIR" ]; then
+        shell_scripts=$(find_shell_scripts "$GAMEDIR")
+        echo "Updating shebangs for game scripts..."
+        echo "$shell_scripts" | update_shebangs_from_list
+        echo "Updating PortMaster path for game scripts..."
+        echo "$shell_scripts" | filter_files_with_string "/roms/ports/PortMaster" | update_portmaster_path_from_list
+    else
+        # If we can't find the GAMEDIR to patch let's not attempt to
+        # run it, since running an unpatched Port will power down NextUI.
+        echo "No GAMEDIR found in $ROM_PATH, not executing game."
+        show_message "Patch failed, exiting..." 3
+        exit 1
+    fi
+
+    nintendo_file=$(find "$USERDATA_PATH/PORTS-portmaster" -maxdepth 1 -iname "nintendo*" -type f)
+    if [ -n "$nintendo_file" ]; then
+        set_controller_layout nintendo
+    else
+        set_controller_layout xbox
+    fi
+
+    show_message "Starting ${ROM_NAME%.*}..." 3
+    "$PAK_DIR/bin/bash" "$ROM_PATH"
+}
+
+main() {
+    echo "1" >/tmp/stay_awake
+    trap "cleanup" EXIT INT TERM HUP QUIT
+
+    preflight_checks
+    save_cpu_settings
+
+    echo "Starting PortMaster with ROM: $ROM_PATH"
+    show_message "Starting, please wait..." forever
+
+    bootstrap_files
+    setup_ports_mount
+    patch_pylibs
+    install_control_txt
 
     minui-power-control &
 
     if echo "$ROM_NAME" | grep -qi "portmaster"; then
-        echo "Starting PortMaster GUI"
-        show_message "Starting PortMaster..." 10 &
-        set_controller_layout xbox
-        rm -f "$EMU_DIR/.pugwash-reboot"
-
-        while true; do
-            pugwash --debug
-
-            if [ ! -f "$EMU_DIR/.pugwash-reboot" ]; then
-                break;
-            fi
-
-            rm -f "$EMU_DIR/.pugwash-reboot"
-        done
-
-        show_message "Applying changes, please wait..." &
-        replace_progressor_binaries "$PORTS_DIR"
-        copy_artwork
-        copy_game_scripts
-        process_squashfs_files "$EMU_DIR/libs"
+        run_portmaster_gui
     else
-        echo "Starting PortMaster with port: $ROM_PATH"
-
-        # Patch the shell script before executing the game
-        echo "Updating shebang for $ROM_PATH..."
-        update_file_shebang "$ROM_PATH"
-        echo "Updating PortMaster path for $ROM_PATH..."
-        if grep -q "/roms/ports/PortMaster" "$ROM_PATH"; then
-            echo "$ROM_PATH" | update_portmaster_path_from_list
-        fi
-
-        directory="${TEMP_DATA_DIR#/}"
-        PORTDIR="/$directory/ports"
-        gamedir_line=$(grep '^GAMEDIR=' "$ROM_PATH")
-        eval "$gamedir_line"
-        echo "Game dir is: $GAMEDIR"
-
-        if [ -n "$GAMEDIR" ]; then
-            shell_scripts=$(find_shell_scripts "$GAMEDIR")
-            echo "Updating shebangs for game scripts..."
-            echo "$shell_scripts" | update_shebangs_from_list
-            echo "Updating PortMaster path for game scripts..."
-            echo "$shell_scripts" | filter_files_with_string "/roms/ports/PortMaster" | update_portmaster_path_from_list
-        else
-            # If we can't find the GAMEDIR to patch let's not attempt to
-            # run it, since running an unpatched Port will power down NextUI.
-            echo "No GAMEDIR found in $ROM_PATH, not executing game."
-            show_message "Patch failed, exiting..." 3
-            exit 1
-        fi
-
-        nintendo_file=$(find "$USERDATA_PATH/PORTS-portmaster" -maxdepth 1 -iname "nintendo*" -type f)
-        if [ -n "$nintendo_file" ]; then
-            set_controller_layout nintendo
-        else
-            set_controller_layout xbox
-        fi
-
-        show_message "Starting ${ROM_NAME%.*}..." 3
-        "$PAK_DIR/bin/bash" "$ROM_PATH"
+        run_port
     fi
 }
 
