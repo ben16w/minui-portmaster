@@ -16,6 +16,20 @@ permissions:
   contents: write
 
 jobs:
+  lint:
+    name: lint
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6.0.2
+
+      - name: Run shellcheck
+        # --severity=error is the starting baseline. Once the existing
+        # warnings (e.g. SC2086 line 245, SC2034 line 463) are cleaned up
+        # we can ratchet up to --severity=warning.
+        run: shellcheck --severity=error launch.sh files/progressor
+
   build:
     name: build
     runs-on: ubuntu-24.04-arm
