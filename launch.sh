@@ -216,6 +216,27 @@ update_portmaster_path_from_list() {
     replace_string_in_files "/roms/ports/PortMaster" "$EMU_DIR"
 }
 
+# Many ports hard-set LD_LIBRARY_PATH (e.g. "/usr/lib:...:$GAMEDIR/libs"),
+# clobbering the value launch.sh exports dropping /usr/trimui/lib which is
+# where TrimUI ships libSDL2 and friends. Ports that don't bundle libs of their
+# own then fail with "libSDL2-2.0.so.0: cannot open shared object file".
+#
+# Append /usr/trimui/lib back onto LD_LIBRARY_PATH in the ports' launch script.
+#
+# The leading address skips lines already referencing it, so re-patching the
+# same script stays idempotent.
+inject_trimui_lib_path() {
+    while IFS= read -r file || [ -n "$file" ]; do
+        [ -z "$file" ] && continue
+        echo "Ensuring /usr/trimui/lib is on LD_LIBRARY_PATH in $file"
+        sed -i \
+            -e '/\/usr\/trimui\/lib/b' \
+            -e 's|\(LD_LIBRARY_PATH="[^"]*\)"|\1:/usr/trimui/lib"|g' \
+            -e "s|\(LD_LIBRARY_PATH='[^']*\)'|\1:/usr/trimui/lib'|g" \
+            "$file"
+    done
+}
+
 
 find_shell_scripts() {
     search_path="$1"
@@ -473,6 +494,10 @@ run_port() {
     if grep -q "/roms/ports/PortMaster" "$ROM_PATH"; then
         echo "$ROM_PATH" | update_portmaster_path_from_list
     fi
+    echo "Ensuring system lib path for $ROM_PATH..."
+    if grep -q "LD_LIBRARY_PATH=" "$ROM_PATH"; then
+        echo "$ROM_PATH" | inject_trimui_lib_path
+    fi
 
     directory="${TEMP_DATA_DIR#/}"
     PORTDIR="/$directory/ports"
@@ -490,6 +515,8 @@ run_port() {
         echo "$shell_scripts" | filter_files_with_string "#!/bin/bash" | update_shebangs_from_list
         echo "Updating PortMaster path for game scripts..."
         echo "$shell_scripts" | filter_files_with_string "/roms/ports/PortMaster" | update_portmaster_path_from_list
+        echo "Ensuring system lib path for game scripts..."
+        echo "$shell_scripts" | filter_files_with_string "LD_LIBRARY_PATH=" | inject_trimui_lib_path
     else
         # If we can't find the GAMEDIR to patch let's not attempt to
         # run it, since running an unpatched Port will power down NextUI.
