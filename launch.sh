@@ -409,6 +409,9 @@ bootstrap_files() {
         mkdir -p "$EMU_DIR/libs"
         mv -f "$PAK_DIR/files/weston_pkg_0.2.squashfs" "$EMU_DIR/libs/"
         touch "$EMU_DIR/libs/weston_pkg_0.2.squashfs"
+        # .md5 sidecar lets list_runtimes() verify against our custom build
+        md5sum "$EMU_DIR/libs/weston_pkg_0.2.squashfs" | awk '{print $1}' \
+            >"$EMU_DIR/libs/weston_pkg_0.2.squashfs.md5"
     fi
 
     if [ -f "$PAK_DIR/files/bin.tar.gz" ] || [ -f "$PAK_DIR/files/lib.tar.gz" ]; then
@@ -461,6 +464,9 @@ patch_pylibs() {
         "$EMU_DIR/pylibs/harbourmaster/platform.py"
     python3 "$PAK_DIR/src/disable_python_function.py" \
         "$EMU_DIR/pylibs/harbourmaster/platform.py" portmaster_install
+    # Prevent check_runtime() from overwriting a locally-verified custom runtime
+    sed -i "s/'Verified': 'Update Available'/'Verified': 'Verified'/" \
+        "$EMU_DIR/pylibs/harbourmaster/harbour.py"
 }
 
 install_control_txt() {
