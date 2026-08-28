@@ -2,12 +2,12 @@ PAK_NAME := $(shell jq -r .name pak.json)
 PAK_DIR := "Emus/tg5040"
 
 MINUI_BASH_VERSION := 1.0.0
-MINUI_POWER_CONTROL_VERSION := 2.0.1
-PORTMASTER_VERSION := 2025.07.14-1510
-MINUI_PRESENTER_VERSION := 0.9.0
-JQ_VERSION := 1.7.1
-SQUASHFS_VERSION := 4.6.1
-7ZIP_VERSION := 2501
+MINUI_POWER_CONTROL_VERSION := 3.0.0
+PORTMASTER_VERSION := 2026.07.28-1212
+MINUI_PRESENTER_VERSION := 0.13.0
+JQ_VERSION := 1.8.2
+SQUASHFS_VERSION := 4.7.5
+7ZIP_VERSION := 2602
 
 clean:
 	find bin -type f ! -name '.gitkeep' -delete
@@ -49,7 +49,7 @@ bin/jq:
 	mkdir -p bin
 	curl -f -o bin/jq -sSL "https://github.com/jqlang/jq/releases/download/jq-$(JQ_VERSION)/jq-linux-arm64"
 	chmod +x bin/jq
-	curl -sSL -o bin/jq.LICENSE "https://github.com/jqlang/jq/raw/refs/heads/master/COPYING"
+	curl -sSL -o bin/jq.LICENSE "https://raw.githubusercontent.com/jqlang/jq/refs/tags/jq-$(JQ_VERSION)/COPYING"
 
 bin/mksquashfs:
 	mkdir -p bin
@@ -75,7 +75,7 @@ bin/bash:
 
 bin/7zzs.aarch64:
 	mkdir -p bin
-	curl -f -o /tmp/7z$(7ZIP_VERSION)-linux-arm64.tar.xz -sSL "https://7-zip.org/a/7z$(7ZIP_VERSION)-linux-arm64.tar.xz"
+	curl -f -o /tmp/7z$(7ZIP_VERSION)-linux-arm64.tar.xz -sSL "https://github.com/ip7z/7zip/releases/download/$(shell echo $(7ZIP_VERSION) | sed 's/../&./')/7z$(7ZIP_VERSION)-linux-arm64.tar.xz"
 	tar -C /tmp -xf /tmp/7z$(7ZIP_VERSION)-linux-arm64.tar.xz
 	mv /tmp/7zzs bin/7zzs.aarch64
 	chmod +x bin/7zzs.aarch64

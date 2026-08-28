@@ -22,7 +22,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6.0.3
+        uses: actions/checkout@v7.0.0
 
       - name: Run shellcheck
         # --severity=error is the starting baseline. Once the existing
@@ -36,14 +36,14 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6.0.3
+        uses: actions/checkout@v7.0.0
 
       - name: Setup QEMU
-        uses: docker/setup-qemu-action@v4.1.0
+        uses: docker/setup-qemu-action@v4.2.0
 
       - name: Set up Docker Buildx
         id: buildx
-        uses: docker/setup-buildx-action@v4.1.0
+        uses: docker/setup-buildx-action@v4.2.0
 
       - name: Create release
         run: make clean build release
@@ -54,7 +54,7 @@ jobs:
           echo "PAK_NAME=$(jq -r .name pak.json)" >> $GITHUB_OUTPUT
 
       - name: Attest Build Provenance
-        uses: actions/attest-build-provenance@v4.1.0
+        uses: actions/attest-build-provenance@v4.1.1
         with:
           subject-path: |
             dist/${{ steps.pak-name.outputs.PAK_NAME }}.pak.zip
@@ -75,7 +75,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6.0.3
+        uses: actions/checkout@v7.0.0
         with:
           fetch-depth: 0
 
