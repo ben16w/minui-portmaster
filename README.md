@@ -128,14 +128,14 @@ To switch back to the Xbox layout, simply delete the `nintendo` file. The layout
 ## Thanks
 
 - The [PortMaster](https://portmaster.games/) team for all their hard work.
-- [ro8inmorgan](https://github.com/ro8inmorgan), [frysee](https://github.com/frysee) and the rest of the NextUI contributors for developing [NextUI](https://github.com/LoveRetro/NextUI).
+- [frysee](https://github.com/frysee) and the rest of the NextUI contributors for developing [NextUI](https://github.com/LoveRetro/NextUI).
 - [Shaun Inman](https://github.com/shauninman) for developing [MinUI](https://github.com/shauninman/MinUI).
-- Also, thank you, [josegonzalez](https://github.com/josegonzalez), for your pak repositories, which this project is based on.
+- Also [josegonzalez](https://github.com/josegonzalez), for their pak repositories, which this project is based on.
 
 ## License
 
 PortMaster is open-source software licensed under the [MIT License](https://opensource.org/licenses/MIT). See the [LICENSE](https://raw.githubusercontent.com/PortsMaster/PortMaster-GUI/refs/heads/main/LICENSE) for details.
 
-The libraries and binaries contained in the `lib` and `bin` directories are third-party components. They are licensed under their respective licenses and are not part of this project.
-
 The MinUI PortMaster project code is licensed under the [MIT License](https://opensource.org/licenses/MIT). See the project [LICENSE](LICENSE) file for more details.
+
+The libraries and binaries contained in the `lib` and `bin` directories are third-party components. They are licensed under their respective licenses and are not part of this project.
