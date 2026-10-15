@@ -38,7 +38,8 @@ export HM_SCRIPTS_DIR="$TEMP_DATA_DIR/ports"
 
 # shellcheck disable=SC2317
 cleanup() {
-    rm -f /tmp/power_control_dummy_pid
+    rm -f /tmp/power_control_dummy_pid /tmp/powercontrol-dummy-pid /tmp/powercontrol-emulator-pid
+    killall button-handler >/dev/null 2>&1 || true
     killall minui-presenter >/dev/null 2>&1 || true
 
     if [ -f "$USERDATA_PATH/PORTS-portmaster/cpu_governor.txt" ]; then
