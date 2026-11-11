@@ -23,5 +23,47 @@ get_controls() {
 . $controlfolder/device_info.txt
 . $controlfolder/funcs.txt
 
+# mod_TrimUI.txt moves HOME after this file is sourced, so keep the pak's for migration.
+PORTS_HOME="$HOME"
+
+# Called from mod_TrimUI.txt once it has moved HOME.
+follow_home() {
+  export XDG_DATA_HOME="$HOME/.local/share"
+  [ "$HOME" = "$PORTS_HOME" ] && return 0
+  mkdir -p "$XDG_DATA_HOME"
+  for old in "$PORTS_HOME"/.local/share/*/; do
+    old="${old%/}"
+    [ -d "$old" ] || continue
+    [ -e "$XDG_DATA_HOME/${old##*/}" ] || cp -a "$old" "$XDG_DATA_HOME/"
+  done
+}
+
+# Data a game wrote under the pak's HOME is merged into the port's folder; the newer copy of a file wins.
+merge_newer() {
+  (cd "$1" && find . -type d) | while IFS= read -r d; do mkdir -p "$2/$d"; done
+  (cd "$1" && find . -type f ! -name .moved-to-port) | while IFS= read -r f; do
+    [ -e "$2/$f" ] && [ ! "$1/$f" -nt "$2/$f" ] && continue
+    cp -p "$1/$f" "$2/$f"
+  done
+}
+
+if [ -n "$BASH_VERSION" ] && command -v bind_directories >/dev/null 2>&1; then
+  eval "$(declare -f bind_directories | sed '1s/^bind_directories/pm_bind_directories/')"
+  bind_directories() {
+    if [ "$HOME" != "$PORTS_HOME" ]; then
+      case "$1" in
+      "$HOME"/.local/share/*)
+        old="$PORTS_HOME/.local/share/${1#"$HOME"/.local/share/}"
+        if [ -d "$old" ] && [ ! -f "$old/.moved-to-port" ] && [ -d "$2" ]; then
+          merge_newer "$old" "$2"
+          touch "$old/.moved-to-port"
+        fi
+        ;;
+      esac
+    fi
+    pm_bind_directories "$@"
+  }
+fi
+
 GPTOKEYB2="$ESUDO env LD_PRELOAD=$EMU_DIR/libinterpose.aarch64.so $controlfolder/gptokeyb2 $ESUDOKILL"
 GPTOKEYB="$ESUDO $controlfolder/gptokeyb $ESUDOKILL"

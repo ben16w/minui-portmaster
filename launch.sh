@@ -461,6 +461,14 @@ install_control_txt() {
     sed -i "s|\$TEMP_DATA_DIR|${TEMP_DATA_DIR#/}|g" "$EMU_DIR/control.txt"
 }
 
+# mod_TrimUI.txt moves HOME for ports; follow_home in control.txt moves XDG_DATA_HOME with it.
+patch_mod_trimui() {
+    mod_file="$EMU_DIR/mod_TrimUI.txt"
+    [ -f "$mod_file" ] || return 0
+    grep -q 'follow_home' "$mod_file" && return 0
+    sed -i '/^export HOME=/a if type follow_home >/dev/null 2>/dev/null; then follow_home; fi' "$mod_file"
+}
+
 run_portmaster_gui() {
     echo "Starting PortMaster GUI"
     show_message "Starting PortMaster..." 10 &
@@ -550,6 +558,7 @@ main() {
     setup_ports_mount
     patch_pylibs
     install_control_txt
+    patch_mod_trimui
 
     minui-power-control &
 
