@@ -124,18 +124,19 @@ To switch back to the Xbox layout, simply delete the `nintendo` file. The layout
 - Log files are stored in `/.userdata/tg5040/logs/PORTS.txt` for debugging.
 - If you encounter problems or bugs, please [open an issue](https://github.com/ben16w/minui-portmaster/issues/new) in this GitHub repository with details and a copy of the log file.
 - For general support or questions you can join the [NextUI Discord](https://discord.gg/HKd7wqZk3h) and go to the **Standalone PortMaster** channel.
+- Older versions of this pak left some saves and settings under `/.userdata/shared/PORTS-portmaster/.local/share/`. If a game starts with a fresh profile after updating, copy the matching folder from there into the port's own data folder under `/Roms/Ports (PORTS)/.ports/` (often a `conf/` subfolder).
 
 ## Thanks
 
 - The [PortMaster](https://portmaster.games/) team for all their hard work.
-- [ro8inmorgan](https://github.com/ro8inmorgan), [frysee](https://github.com/frysee) and the rest of the NextUI contributors for developing [NextUI](https://github.com/LoveRetro/NextUI).
+- [frysee](https://github.com/frysee) and the rest of the NextUI contributors for developing [NextUI](https://github.com/LoveRetro/NextUI).
 - [Shaun Inman](https://github.com/shauninman) for developing [MinUI](https://github.com/shauninman/MinUI).
-- Also, thank you, [josegonzalez](https://github.com/josegonzalez), for your pak repositories, which this project is based on.
+- Also [josegonzalez](https://github.com/josegonzalez), for their pak repositories, which this project is based on.
 
 ## License
 
 PortMaster is open-source software licensed under the [MIT License](https://opensource.org/licenses/MIT). See the [LICENSE](https://raw.githubusercontent.com/PortsMaster/PortMaster-GUI/refs/heads/main/LICENSE) for details.
 
-The libraries and binaries contained in the `lib` and `bin` directories are third-party components. They are licensed under their respective licenses and are not part of this project.
-
 The MinUI PortMaster project code is licensed under the [MIT License](https://opensource.org/licenses/MIT). See the project [LICENSE](LICENSE) file for more details.
+
+The libraries and binaries contained in the `lib` and `bin` directories are third-party components. They are licensed under their respective licenses and are not part of this project.

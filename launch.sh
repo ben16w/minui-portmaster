@@ -38,7 +38,8 @@ export HM_SCRIPTS_DIR="$TEMP_DATA_DIR/ports"
 
 # shellcheck disable=SC2317
 cleanup() {
-    rm -f /tmp/power_control_dummy_pid
+    rm -f /tmp/powercontrol-dummy-pid
+    killall button-handler >/dev/null 2>&1 || true
     killall minui-presenter >/dev/null 2>&1 || true
 
     if [ -f "$USERDATA_PATH/PORTS-portmaster/cpu_governor.txt" ]; then
@@ -475,6 +476,14 @@ install_control_txt() {
     sed -i "s|\$TEMP_DATA_DIR|${TEMP_DATA_DIR#/}|g" "$EMU_DIR/control.txt"
 }
 
+# mod_TrimUI.txt moves HOME for ports; follow_home in control.txt moves XDG_DATA_HOME with it.
+patch_mod_trimui() {
+    mod_file="$EMU_DIR/mod_TrimUI.txt"
+    [ -f "$mod_file" ] || return 0
+    grep -q 'follow_home' "$mod_file" && return 0
+    sed -i '/^export HOME=/a if type follow_home >/dev/null 2>/dev/null; then follow_home; fi' "$mod_file"
+}
+
 run_portmaster_gui() {
     echo "Starting PortMaster GUI"
     show_message "Starting PortMaster..." 10 &
@@ -564,6 +573,7 @@ main() {
     setup_ports_mount
     patch_pylibs
     install_control_txt
+    patch_mod_trimui
 
     minui-power-control &
 
