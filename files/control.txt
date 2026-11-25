@@ -15,6 +15,9 @@ fi
 ESUDO=""
 ESUDOKILL="-1"
 export SDL_GAMECONTROLLERCONFIG_FILE="/$controlfolder/gamecontrollerdb.txt"
+# Mappings from this variable can't be replaced by a game's built-in database (e.g. MonoGame).
+sdl_controllerconfig="$(grep "^030000005e0400008e02000014010000," "$SDL_GAMECONTROLLERCONFIG_FILE")"
+export SDL_GAMECONTROLLERCONFIG="$sdl_controllerconfig"
 
 get_controls() {
   sleep 0.1
